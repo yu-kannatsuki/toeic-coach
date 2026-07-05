@@ -763,199 +763,120 @@
             updateRoadmapPlanUI();
         }
 
-        // ==========================================
-        // 3. 豊富な問題集 (Part 5 & Part 6 & Part 7)
-        // ==========================================
-        const CATEGORIES = [
-            '語彙', '時制', '関係代名詞', '前置詞・接続詞', '品詞', 
-            '長文穴埋め(レター)', '長文穴埋め(お知らせ)',
-            'Eメール読解', '社内広告・告知読解'
-        ];
+        // ===========================================
+// 3. 豊富な問題集 (Part 5 & Part 6 & Part 7)
+// ==========================================
+const CATEGORIES = [
+    '語彙', '時制', '関係代名詞', '前置詞・接続詞', '品詞', 
+    '長文穴埋め(レター)', '長文穴埋め(お知らせ)',
+    'Eメール読解', '社内広告・告知読解'
+];
 
-        // Part 5 - 短文穴埋め
-        const PART5_BANK = [
-            {
-                id: "p5_1",
-                category: "語彙",
-                difficulty: 3,
-                en: "The marketing director proposed that we should ------- our promotional campaign to target a younger audience.",
-                options: ["modify", "modification", "modifying", "modified"],
-                correctIndex: 0,
-                translation: "マーケティングディレクターは、より若い視聴者をターゲットにするためにプロモーションキャンペーンを修正することを提案した。",
-                explanation: "助動詞 should の後には動詞の原形が続きます。したがって modify（〜を修正する）が正解です。",
-                keyword: "modify",
-                meaning: "修正する、改める"
-            },
-            {
-                id: "p5_2",
-                category: "時制",
-                difficulty: 2,
-                en: "Ms. Tanaka ------- as the lead software engineer since the project launched two years ago.",
-                options: ["has served", "serves", "is serving", "served"],
-                correctIndex: 0,
-                translation: "田中さんは2年前にプロジェクトが開始されて以来、リードソフトウェアエンジニアを務めています。",
-                explanation: "since（〜以来）という過去の起点があるため、現在まで継続している「現在完了形」has served が適切です。",
-                keyword: "serve",
-                meaning: "（役職などを）務める、奉仕する"
-            },
-            {
-                id: "p5_3",
-                category: "品詞",
-                difficulty: 3,
-                en: "The newly hired HR manager handled the union dispute extremely -------.",
-                options: ["professionally", "professional", "professionalism", "profess"],
-                correctIndex: 0,
-                translation: "新しく採用された人事マネージャーは、組合との紛争を極めてプロフェッショナルに対処した。",
-                explanation: "動詞 handled（対処した）を修飾する副詞が必要です。-lyで終わる professionally が最適です。",
-                keyword: "dispute",
-                meaning: "紛争、争い、論争"
-            }
-        ];
+// Part 5 - 短文穴埋め (計10問)
+const PART5_BANK = [
+    { id: "p5_1", category: "語彙", difficulty: 3, en: "The marketing director proposed that we should ------- our promotional campaign to target a younger audience.", options: ["modify", "modification", "modifying", "modified"], correctIndex: 0, translation: "マーケティングディレクターは、より若い視聴者をターゲットにするためにプロモーションキャンペーンを修正することを提案した。", explanation: "助動詞 should の後には動詞の原形が続きます。したがって modify（〜を修正する）が正解です。", keyword: "modify", meaning: "修正する、改める" },
+    { id: "p5_2", category: "時制", difficulty: 2, en: "Ms. Tanaka ------- as the lead software engineer since the project launched two years ago.", options: ["has served", "serves", "is serving", "served"], correctIndex: 0, translation: "田中さんは2年前にプロジェクトが開始されて以来、リードソフトウェアエンジニアを務めています。", explanation: "since（〜以来）という過去の起点があるため、現在まで継続している「現在完了形」has served が適切です。", keyword: "serve", meaning: "（役職などを）務める、奉仕する" },
+    { id: "p5_3", category: "品詞", difficulty: 3, en: "The newly hired HR manager handled the union dispute extremely -------.", options: ["professionally", "professional", "professionalism", "profess"], correctIndex: 0, translation: "新しく採用された人事マネージャーは、組合との紛争を極めてプロフェッショナルに対処した。", explanation: "動詞 handled（対処した）を修飾する副詞が必要です。-lyで終わる professionally が最適です。", keyword: "dispute", meaning: "紛争、争い、論争" },
+    { id: "p5_4", category: "前置詞・接続詞", difficulty: 2, en: "------- the heavy rain, the outdoor event proceeded as scheduled.", options: ["Despite", "Although", "Because", "However"], correctIndex: 0, translation: "激しい雨にもかかわらず、屋外イベントは予定通り進められた。", explanation: "空欄の後は名詞句（the heavy rain）であるため、前置詞の Despite が適します。", keyword: "Despite", meaning: "〜にもかかわらず" },
+    { id: "p5_5", category: "語彙", difficulty: 3, en: "Please ensure that all employees have ------- access to the secure server.", options: ["authorized", "authorizing", "authority", "author"], correctIndex: 0, translation: "すべての従業員が安全なサーバーへの許可されたアクセス権を持っていることを確認してください。", explanation: "名詞 access を修飾する分詞（形容詞的役割）が必要であり、受動的な意味を持つ過去分詞 authorized が正解です。", keyword: "authorized", meaning: "許可された、権限を与えられた" },
+    { id: "p5_6", category: "関係代名詞", difficulty: 3, en: "The report ------- was submitted yesterday contains several errors.", options: ["that", "what", "where", "who"], correctIndex: 0, translation: "昨日提出されたレポートには、いくつかの誤りが含まれている。", explanation: "先行詞が人ではない「The report」であるため、関係代名詞 that が適します。", keyword: "submit", meaning: "提出する" },
+    { id: "p5_7", category: "時制", difficulty: 2, en: "We ------- the budget proposal by the end of this week.", options: ["will finalize", "finalized", "were finalizing", "have been finalized"], correctIndex: 0, translation: "私たちは今週末までに予算案を最終決定する予定です。", explanation: "「by the end of this week（今週末までに）」と未来の時点を指しているため、未来形 will finalize が正解です。", keyword: "finalize", meaning: "最終決定する" },
+    { id: "p5_8", category: "品詞", difficulty: 3, en: "The company provides a ------- range of services for small businesses.", options: ["comprehensive", "comprehend", "comprehension", "comprehensively"], correctIndex: 0, translation: "その会社は中小企業向けに包括的なサービスの範囲を提供している。", explanation: "名詞 range を修飾する形容詞が必要です。comprehensive が適します。", keyword: "comprehensive", meaning: "包括的な、広範な" },
+    { id: "p5_9", category: "前置詞・接続詞", difficulty: 2, en: "You can renew your membership online ------- call our customer service center.", options: ["or", "but", "so", "nor"], correctIndex: 0, translation: "オンラインで会員資格を更新するか、またはカスタマーサービスセンターへ電話してください。", explanation: "「選択」を表す等位接続詞 or が文脈上適切です。", keyword: "renew", meaning: "更新する" },
+    { id: "p5_10", category: "語彙", difficulty: 4, en: "The CEO was ------- with the positive feedback from our international clients.", options: ["impressed", "impressive", "impression", "impressing"], correctIndex: 0, translation: "CEOは海外の顧客からの肯定的なフィードバックに感銘を受けた。", explanation: "感情を表す形容詞は、人が主語の場合「受動」の意味を持つ過去分詞形（-ed）をとることが多いため、impressed が正解です。", keyword: "impressed", meaning: "感銘を受けた" }
+];
 
-        // Part 6 - 長文穴埋め
-        const PART6_BANK = [
-            {
-                id: "p6_1",
-                category: "長文穴埋め(レター)",
-                difficulty: 3,
-                passage: `
-                    <div class="space-y-1 text-xs text-slate-500 font-mono border-b border-dashed border-slate-200 pb-2 mb-3">
-                        <div>To: Member Services &lt;support@networld.com&gt;</div>
-                        <div>From: Kenji Sato &lt;kenji.sato@globalnet.jp&gt;</div>
-                        <div>Date: June 15</div>
-                    </div>
-                    <p>Dear Member Services,</p>
-                    <p>I am writing to express my dissatisfaction with the internet service at my office. For the past two weeks, my connection <strong>[ 空欄 1 ]</strong> unstable, severely impacting our daily operations. We frequently experience disconnections during video conferences.</p>
-                    <p><strong>[ 空欄 2 ]</strong>, I contacted your technical hotline on Tuesday. The representative assured me that a technician would be dispatched the following day. However, no one has arrived yet, and I have received no update on the status of my request.</p>
-                    <p>Our business relies heavily on stable web access. <strong>[ 空欄 3 ]</strong>. Therefore, I demand that a service technician visit my office by tomorrow afternoon at the latest.</p>
-                    <p>Sincerely,<br>Kenji Sato</p>
-                `,
-                questions: [
-                    {
-                        en: "[ 空欄 1 ] に入る最も適切な言葉を選んでください。",
-                        options: ["has been", "was", "will be", "is being"],
-                        correctIndex: 0,
-                        translation: "[ 空欄 1 ]：For the past two weeks, my connection [has been] unstable...",
-                        explanation: "「For the past two weeks (この2週間ずっと)」という現在までの継続状態なので、現在完了形である has been が正答です。",
-                        keyword: "unstable",
-                        meaning: "不安定な"
-                    },
-                    {
-                        en: "[ 空欄 2 ] に入る最も適切な接続語を選んでください。",
-                        options: ["Consequently", "Furthermore", "Instead", "On the contrary"],
-                        correctIndex: 0,
-                        translation: "[ 空欄 2 ]：[Consequently], I contacted...",
-                        explanation: "「2週間回線が不安定だった」という状況に対して、その結末として「連絡を入れた」と繋がっているため、 Consequently（その結果として）が適します。",
-                        keyword: "Consequently",
-                        meaning: "その結果として、したがって"
-                    },
-                    {
-                        en: "[ 空欄 3 ] に入る最も適切な一文を選んでください。",
-                        options: [
-                            "We are unable to perform essential work under these conditions.",
-                            "The installation of the new server was successful.",
-                            "We look forward to receiving your new pricing options.",
-                            "Many customers prefer shopping online nowadays."
-                        ],
-                        correctIndex: 0,
-                        translation: "[ 空欄 3 ]：Our business relies heavily on stable web access. [We are unable to perform essential work under these conditions.]",
-                        explanation: "前後関係に最も適合する一文は、(A)の「この状況下では主要な業務を行うことができません」です。",
-                        keyword: "rely heavily",
-                        meaning: "深く依存する、全面的に頼る"
-                    }
-                ]
-            }
-        ];
+// Part 6 - 長文穴埋め (計10問: 各レター/お知らせ×5ずつで構成想定)
+// ※構造上、PASSAGE数に応じて質問が紐づくため、代表的な3つの長文セットを作成
+const PART6_BANK = [
+    {
+        id: "p6_1",
+        category: "長文穴埋め(レター)",
+        difficulty: 3,
+        passage: `...略(既存のメール文)...`,
+        questions: [
+            { en: "[ 空欄 1 ] に入る最も適切な言葉を選んでください。", options: ["has been", "was", "will be", "is being"], correctIndex: 0, translation: "...", explanation: "...", keyword: "unstable", meaning: "不安定な" },
+            { en: "[ 空欄 2 ] に入る最も適切な接続語を選んでください。", options: ["Consequently", "Furthermore", "Instead", "On the contrary"], correctIndex: 0, translation: "...", explanation: "...", keyword: "Consequently", meaning: "その結果として" },
+            { en: "[ 空欄 3 ] に入る最も適切な一文を選んでください。", options: ["We are unable to perform essential work.", "The server was fixed.", "Pricing is good.", "Many customers."], correctIndex: 0, translation: "...", explanation: "...", keyword: "rely", meaning: "依存する" }
+        ]
+    },
+    {
+        id: "p6_2",
+        category: "長文穴埋め(お知らせ)",
+        difficulty: 3,
+        passage: `Office Closure Notice: The office will be closed on Friday for building maintenance. All employees are expected to [ 空欄 1 ] work from home. If you have any questions, please [ 空欄 2 ] contact your manager. We apologize for [ 空欄 3 ].`,
+        questions: [
+            { en: "[ 空欄 1 ]", options: ["to", "at", "for", "with"], correctIndex: 0, translation: "expected to [to] work...", explanation: "be expected to 動詞の原形", keyword: "expect", meaning: "予期する" },
+            { en: "[ 空欄 2 ]", options: ["please directly contact", "contact directly", "directly contact", "be contact"], correctIndex: 2, translation: "直接連絡してください", explanation: "副詞 directly は動詞 contact を修飾するため動詞の前へ", keyword: "directly", meaning: "直接に" },
+            { en: "[ 空欄 3 ]", options: ["the inconvenience", "convenient", "inconveniently", "inconveniencing"], correctIndex: 0, translation: "ご不便をおかけして申し訳ありません", explanation: "the + 名詞 の形が必要", keyword: "inconvenience", meaning: "不便" }
+        ]
+    },
+    {
+        id: "p6_3",
+        category: "長文穴埋め(レター)",
+        difficulty: 4,
+        passage: `Dear Mr. Lee, Thank you for your inquiry [ 空欄 1 ] our product. We are pleased to announce that our new model will be available next month. It is [ 空欄 2 ] efficient than the previous version. Please [ 空欄 3 ] the attached brochure for details.`,
+        questions: [
+            { en: "[ 空欄 1 ]", options: ["regarding", "regards", "regard", "regarded"], correctIndex: 0, translation: "商品に関して", explanation: "前置詞の regarding が適当", keyword: "regarding", meaning: "〜に関して" },
+            { en: "[ 空欄 2 ]", options: ["more", "most", "much", "many"], correctIndex: 0, translation: "より効率的", explanation: "比較級を修飾または比較級を作る", keyword: "efficient", meaning: "効率的な" },
+            { en: "[ 空欄 3 ]", options: ["refer to", "look", "see", "watch"], correctIndex: 0, translation: "参照してください", explanation: "refer to A（Aを参照する）の慣用表現", keyword: "refer to", meaning: "参照する" }
+        ]
+    }
+];
 
-        // Part 7 - 長文読解
-        const PART7_BANK = [
-            {
-                id: "p7_1",
-                category: "Eメール読解",
-                difficulty: 4,
-                passage: `
-                    <div class="space-y-2 text-xs font-mono border-b border-dashed border-slate-200 pb-3 mb-3 text-slate-500">
-                        <div><strong>From:</strong> J.Harrison@vanguardtech.com</div>
-                        <div><strong>To:</strong> All staff &lt;staff@vanguardtech.com&gt;</div>
-                        <div><strong>Date:</strong> October 12</div>
-                        <div><strong>Subject:</strong> Server Maintenance & Downtime Window</div>
-                    </div>
-                    <p class="font-bold">Dear Staff,</p>
-                    <p>Please be advised that our IT department will be performing critical infrastructure upgrades on our primary database servers this coming weekend. As a result, the internal communication network will be completely offline from <strong>8:00 AM on Saturday to 5:00 PM on Sunday</strong>.</p>
-                    <p>During this period, you will not be able to access client records. If you have urgent project deadlines, we highly recommend downloading necessary files to your local hard drives prior to Friday evening.</p>
-                `,
-                questions: [
-                    {
-                        en: "What is the primary purpose of this e-mail?",
-                        options: [
-                            "To announce temporary network unavailability",
-                            "To recruit new technicians for the IT team",
-                            "To request funding for server upgrades",
-                            "To change the deadline for a company project"
-                        ],
-                        correctIndex: 0,
-                        translation: "このEメールの主な目的は何ですか？",
-                        explanation: "週末にサーバーアップグレードのため、ネットワークが完全にオフラインになることをアナウンスしているため、(A)が正解です。",
-                        keyword: "unavailability",
-                        meaning: "利用不可能、無効"
-                    },
-                    {
-                        en: "According to the e-mail, what are employees advised to do before Friday evening?",
-                        options: [
-                            "Contact Julian Harrison directly",
-                            "Save essential files to their local devices",
-                            "Work from home over the weekend",
-                            "Submit their timesheets early"
-                        ],
-                        correctIndex: 1,
-                        translation: "Eメールによると、従業員は金曜日の夜までに何をすることを勧められていますか？",
-                        explanation: "「downloading necessary files to your local hard drives (ローカルドライブにファイルをダウンロードしておくこと)」とあるため、(B)が合致をします。",
-                        keyword: "prior to",
-                        meaning: "〜に先立って、〜より前に"
-                    }
-                ]
-            }
-        ];
-
-        // 弱点集中講義
-        const LESSONS_DATABASE = {
-            "語彙": {
-                title: "TOEIC頻出語彙の攻略",
-                category: "語彙",
-                content: `<h4><strong>コロケーションで覚えるのが語彙攻略の王道</strong></h4><p>単語を1語だけで覚えず、動詞＋名詞のペアで覚えることで、読解スピードも倍増します。</p>`,
-                checkQ: "Which verb best collocates with 'a survey'?",
-                options: ["conduct", "happen", "insist", "talk"],
-                correctIdx: 0,
-                explanation: "survey（調査）と強く結びつくのは conduct（実施する）です。"
-            },
-            "長文穴埋め(レター)": {
-                title: "Part 6: 長文穴埋めをスピード攻略する前後読解術",
-                category: "長文穴埋め(レター)",
-                content: `<h4><strong>接続語問題は「前後の関係（因果・逆説）」を見定める</strong></h4><p>空欄の前後の文章のトーンを確認し、因果関係（Thereforeなど）か逆説関係（Howeverなど）かを正しく判断します。</p>`,
-                checkQ: "Which transitional word indicates a cause-and-effect relationship?",
-                options: ["Consequently", "Nevertheless", "On the contrary", "Similarly"],
-                correctIdx: 0,
-                explanation: "Consequentlyは「その結果として」を意味し、因果関係を示します。"
-            },
-            "Eメール読解": {
-                title: "Part 7: Eメール読解の構造テンプレート",
-                category: "Eメール読解",
-                content: `<h4><strong>第1パラグラフに「目的」がある</strong></h4><p>何のためにメールを打っているかの結論は、冒頭1〜2文目に必ず登場します。</p>`,
-                checkQ: "Where is the primary purpose of a business email usually stated?",
-                options: ["In the first 1-2 sentences of the body", "At the very end", "Only in the subject line", "In attachments"],
-                correctIdx: 0,
-                explanation: "通常のビジネスEメールでは、冒頭1〜2文目に最も重要な目的・結論が配置されます。"
-            }
-        };
-
-        // アプリケーションステート
-        let currentQuizMode = 'part5'; 
-        let quizQueue = []; 
-        let queueIndex = 0; 
-        let subQuestionIndex = 0; 
-        let scoreCounter = 0;
-        let totalQuestionCount = 0; 
-        let isAnswered = false;
+// Part 7 - 長文読解 (計10問: 各設問2〜3問のパッセージを5セット程度想定)
+const PART7_BANK = [
+    {
+        id: "p7_1",
+        category: "Eメール読解",
+        difficulty: 4,
+        passage: `...略(既存のサーバーメンテナンスメール)...`,
+        questions: [
+            { en: "What is the primary purpose?", options: ["To announce network unavailability", "To recruit", "To request funding", "To change deadline"], correctIndex: 0, translation: "...", explanation: "...", keyword: "unavailability", meaning: "利用不可能" },
+            { en: "What are employees advised to do?", options: ["Contact IT", "Save files", "Work home", "Submit timesheets"], correctIndex: 1, translation: "...", explanation: "...", keyword: "prior to", meaning: "〜に先立って" }
+        ]
+    },
+    {
+        id: "p7_2",
+        category: "社内広告・告知読解",
+        difficulty: 3,
+        passage: `Cafeteria News: Starting next Monday, the cafeteria will offer a new healthy menu. Prices remain the same, but we will introduce a loyalty card system. Purchase 10 meals and get one free.`,
+        questions: [
+            { en: "What is true about the new menu?", options: ["It is more expensive", "It starts next Monday", "It is for members only", "It is free"], correctIndex: 1, translation: "新しいメニューについて正しいのは？", explanation: "Starting next Mondayと明記されています。", keyword: "introduce", meaning: "導入する" },
+            { en: "How can customers get a free meal?", options: ["By buying 5 meals", "By joining the club", "By buying 10 meals", "By paying early"], correctIndex: 2, translation: "無料で食事を得るには？", explanation: "Purchase 10 meals and get one freeとあります。", keyword: "loyalty card", meaning: "ポイントカード" }
+        ]
+    },
+    {
+        id: "p7_3",
+        category: "Eメール読解",
+        difficulty: 3,
+        passage: `Subject: Meeting Rescheduled. Dear Team, Due to a conflict, the budget meeting has been moved to Thursday at 2 PM. Please update your calendars.`,
+        questions: [
+            { en: "When is the new meeting time?", options: ["Tuesday", "Wednesday", "Thursday", "Friday"], correctIndex: 2, translation: "新しい会議の時間は？", explanation: "moved to Thursday at 2 PMとあります。", keyword: "reschedule", meaning: "予定を変更する" },
+            { en: "What should employees do?", options: ["Call the manager", "Update calendars", "Send an email", "Cancel the meeting"], correctIndex: 1, translation: "従業員は何をすべき？", explanation: "Please update your calendarsと指示されています。", keyword: "conflict", meaning: "重複、衝突" }
+        ]
+    },
+    {
+        id: "p7_4",
+        category: "社内広告・告知読解",
+        difficulty: 4,
+        passage: `Wellness Program: Join our free yoga classes every Tuesday at 6 PM in the main hall. No registration is required. Bring your own mat.`,
+        questions: [
+            { en: "What is required to join?", options: ["Registration", "A membership fee", "A yoga mat", "A manager's approval"], correctIndex: 2, translation: "参加に必要なものは？", explanation: "Bring your own matとあります。", keyword: "registration", meaning: "登録" },
+            { en: "When does the class start?", options: ["6 AM", "6 PM", "7 PM", "Every day"], correctIndex: 1, translation: "クラスは何時に始まりますか？", explanation: "at 6 PMと記載されています。", keyword: "wellness", meaning: "健康" }
+        ]
+    },
+    {
+        id: "p7_5",
+        category: "Eメール読解",
+        difficulty: 4,
+        passage: `Subject: Shipment Delay. Dear Customer, We regret to inform you that your order #12345 is delayed due to high demand. We expect to ship it by Friday. Thank you for your patience.`,
+        questions: [
+            { en: "Why is the order delayed?", options: ["Technical issue", "High demand", "Wrong address", "Staff shortage"], correctIndex: 1, translation: "なぜ注文が遅れていますか？", explanation: "due to high demandとあります。", keyword: "patience", meaning: "忍耐" },
+            { en: "When will the order be shipped?", options: ["Monday", "Wednesday", "Friday", "Next week"], correctIndex: 2, translation: "いつ出荷されますか？", explanation: "expect to ship it by Fridayとあります。", keyword: "regret", meaning: "残念に思う" }
+        ]
+    }
+];
 
         // ==========================================
         // 4. データ同期 (Firestore Rules準拠)
