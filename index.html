@@ -763,7 +763,7 @@
             updateRoadmapPlanUI();
         }
 
-        // ===========================================
+ // ===========================================
 // 3. 豊富な問題集 (Part 5 & Part 6 & Part 7)
 // ==========================================
 const CATEGORIES = [
@@ -786,56 +786,33 @@ const PART5_BANK = [
     { id: "p5_10", category: "語彙", difficulty: 4, en: "The CEO was ------- with the positive feedback from our international clients.", options: ["impressed", "impressive", "impression", "impressing"], correctIndex: 0, translation: "CEOは海外の顧客からの肯定的なフィードバックに感銘を受けた。", explanation: "感情を表す形容詞は、人が主語の場合「受動」の意味を持つ過去分詞形（-ed）をとることが多いため、impressed が正解です。", keyword: "impressed", meaning: "感銘を受けた" }
 ];
 
-// Part 6 - 長文穴埋め
+// Part 6 - 長文穴埋め（1問ずつのオブジェクト形式に修正）
 const PART6_BANK = [
-    {
-        id: "p6_1",
-        category: "長文穴埋め(レター)",
-        difficulty: 3,
-        passage: `...略(既存のメール文)...`,
-        questions: [
-            { en: "[ 空欄 1 ] に入る最も適切な言葉を選んでください。", options: ["has been", "was", "will be", "is being"], correctIndex: 0, translation: "...", explanation: "...", keyword: "unstable", meaning: "不安定な" },
-            { en: "[ 空欄 2 ] に入る最も適切な接続語を選んでください。", options: ["Consequently", "Furthermore", "Instead", "On the contrary"], correctIndex: 0, translation: "...", explanation: "...", keyword: "Consequently", meaning: "その結果として" },
-            { en: "[ 空欄 3 ] に入る最も適切な一文を選んでください。", options: ["We are unable to perform essential work.", "The server was fixed.", "Pricing is good.", "Many customers."], correctIndex: 0, translation: "...", explanation: "...", keyword: "rely", meaning: "依存する" }
-        ]
-    },
-    {
-        id: "p6_2",
-        category: "長文穴埋め(お知らせ)",
-        difficulty: 3,
-        passage: `Office Closure Notice: The office will be closed on Friday for building maintenance. All employees are expected to [ 空欄 1 ] work from home. If you have any questions, please [ 空欄 2 ] contact your manager. We apologize for [ 空欄 3 ].`,
-        questions: [
-            { en: "[ 空欄 1 ]", options: ["to", "at", "for", "with"], correctIndex: 0, translation: "expected to [to] work...", explanation: "be expected to 動詞の原形", keyword: "expect", meaning: "予期する" },
-            { en: "[ 空欄 2 ]", options: ["please directly contact", "contact directly", "directly contact", "be contact"], correctIndex: 2, translation: "直接連絡してください", explanation: "副詞 directly は動詞 contact を修飾するため動詞の前へ", keyword: "directly", meaning: "直接に" },
-            { en: "[ 空欄 3 ]", options: ["the inconvenience", "convenient", "inconveniently", "inconveniencing"], correctIndex: 0, translation: "ご不便をおかけして申し訳ありません", explanation: "the + 名詞 の形が必要", keyword: "inconvenience", meaning: "不便" }
-        ]
-    },
-    {
-        id: "p6_3",
-        category: "長文穴埋め(レター)",
-        difficulty: 4,
-        passage: `Dear Mr. Lee, Thank you for your inquiry [ 空欄 1 ] our product. We are pleased to announce that our new model will be available next month. It is [ 空欄 2 ] efficient than the previous version. Please [ 空欄 3 ] the attached brochure for details.`,
-        questions: [
-            { en: "[ 空欄 1 ]", options: ["regarding", "regards", "regard", "regarded"], correctIndex: 0, translation: "商品に関して", explanation: "前置詞の regarding が適当", keyword: "regarding", meaning: "〜に関して" },
-            { en: "[ 空欄 2 ]", options: ["more", "most", "much", "many"], correctIndex: 0, translation: "より効率的", explanation: "比較級を修飾または比較級を作る", keyword: "efficient", meaning: "効率的な" },
-            { en: "[ 空欄 3 ]", options: ["refer to", "look", "see", "watch"], correctIndex: 0, translation: "参照してください", explanation: "refer to A（Aを参照する）の慣用表現", keyword: "refer to", meaning: "参照する" }
-        ]
-    }
+    { id: "p6_1_1", category: "長文穴埋め(レター)", difficulty: 3, passage: "...", en: "For the past two weeks, my connection [ 空欄 1 ] unstable.", options: ["has been", "was", "will be", "is being"], correctIndex: 0, translation: "...", explanation: "...", keyword: "unstable", meaning: "不安定な" },
+    { id: "p6_1_2", category: "長文穴埋め(レター)", difficulty: 3, passage: "...", en: "[ 空欄 2 ], I contacted your technical hotline on Tuesday.", options: ["Consequently", "Furthermore", "Instead", "On the contrary"], correctIndex: 0, translation: "...", explanation: "...", keyword: "Consequently", meaning: "その結果として" },
+    { id: "p6_1_3", category: "長文穴埋め(レター)", difficulty: 3, passage: "...", en: "Our business relies heavily on stable web access. [ 空欄 3 ]", options: ["We are unable to perform essential work.", "The server was fixed.", "Pricing is good.", "Many customers."], correctIndex: 0, translation: "...", explanation: "...", keyword: "rely", meaning: "依存する" },
+    { id: "p6_2_1", category: "長文穴埋め(お知らせ)", difficulty: 3, passage: "Office Closure Notice...", en: "All employees are expected to [ 空欄 1 ] work from home.", options: ["to", "at", "for", "with"], correctIndex: 0, translation: "...", explanation: "...", keyword: "expect", meaning: "予期する" },
+    { id: "p6_2_2", category: "長文穴埋め(お知らせ)", difficulty: 3, passage: "Office Closure Notice...", en: "If you have any questions, please [ 空欄 2 ] contact your manager.", options: ["please directly contact", "contact directly", "directly contact", "be contact"], correctIndex: 2, translation: "...", explanation: "...", keyword: "directly", meaning: "直接に" },
+    { id: "p6_2_3", category: "長文穴埋め(お知らせ)", difficulty: 3, passage: "Office Closure Notice...", en: "We apologize for [ 空欄 3 ].", options: ["the inconvenience", "convenient", "inconveniently", "inconveniencing"], correctIndex: 0, translation: "...", explanation: "...", keyword: "inconvenience", meaning: "不便" },
+    { id: "p6_3_1", category: "長文穴埋め(レター)", difficulty: 4, passage: "...", en: "Thank you for your inquiry [ 空欄 1 ] our product.", options: ["regarding", "regards", "regard", "regarded"], correctIndex: 0, translation: "...", explanation: "...", keyword: "regarding", meaning: "〜に関して" },
+    { id: "p6_3_2", category: "長文穴埋め(レター)", difficulty: 4, passage: "...", en: "It is [ 空欄 2 ] efficient than the previous version.", options: ["more", "most", "much", "many"], correctIndex: 0, translation: "...", explanation: "...", keyword: "efficient", meaning: "効率的な" },
+    { id: "p6_3_3", category: "長文穴埋め(レター)", difficulty: 4, passage: "...", en: "Please [ 空欄 3 ] the attached brochure for details.", options: ["refer to", "look", "see", "watch"], correctIndex: 0, translation: "...", explanation: "...", keyword: "refer to", meaning: "参照する" }
 ];
 
-// Part 7 - 長文読解
-// Part 7 - 長文読解 (1パッセージにつき、設問ごとにオブジェクトを分ける)
+// Part 7 - 長文読解（1問ずつのオブジェクト形式に修正）
 const PART7_BANK = [
-    // パッセージ p7_1 関連
-    { id: "p7_1_1", category: "Eメール読解", difficulty: 4, passage: `...ここに実際のパッセージ文...`, en: "What is the primary purpose of this e-mail?", options: ["To announce...", "To recruit...", "To request...", "To change..."], correctIndex: 0, translation: "...", explanation: "...", keyword: "unavailability", meaning: "利用不可能" },
-    { id: "p7_1_2", category: "Eメール読解", difficulty: 4, passage: `...同じパッセージ文...`, en: "According to the e-mail, what are employees advised to do...?", options: ["Contact...", "Save...", "Work...", "Submit..."], correctIndex: 1, translation: "...", explanation: "...", keyword: "prior to", meaning: "〜に先立って" },
-    
-    // パッセージ p7_2 関連
-    { id: "p7_2_1", category: "社内広告・告知読解", difficulty: 3, passage: `...次のパッセージ...`, en: "What is true about the new menu?", options: [...], correctIndex: 1, ... },
-    { id: "p7_2_2", category: "社内広告・告知読解", difficulty: 3, passage: `...同じパッセージ...`, en: "How can customers get a free meal?", options: [...], correctIndex: 2, ... }
-    
-    // 以下、p7_3, p7_4, p7_5 も同様に設問ごとにオブジェクトを作る
+    { id: "p7_1_1", category: "Eメール読解", difficulty: 4, passage: "...", en: "What is the primary purpose of this e-mail?", options: ["To announce network unavailability", "To recruit", "To request funding", "To change deadline"], correctIndex: 0, translation: "...", explanation: "...", keyword: "unavailability", meaning: "利用不可能" },
+    { id: "p7_1_2", category: "Eメール読解", difficulty: 4, passage: "...", en: "What are employees advised to do before Friday evening?", options: ["Contact IT", "Save files", "Work home", "Submit timesheets"], correctIndex: 1, translation: "...", explanation: "...", keyword: "prior to", meaning: "〜に先立って" },
+    { id: "p7_2_1", category: "社内広告・告知読解", difficulty: 3, passage: "...", en: "What is true about the new menu?", options: ["It is more expensive", "It starts next Monday", "It is for members only", "It is free"], correctIndex: 1, translation: "...", explanation: "...", keyword: "introduce", meaning: "導入する" },
+    { id: "p7_2_2", category: "社内広告・告知読解", difficulty: 3, passage: "...", en: "How can customers get a free meal?", options: ["By buying 5 meals", "By joining the club", "By buying 10 meals", "By paying early"], correctIndex: 2, translation: "...", explanation: "...", keyword: "loyalty card", meaning: "ポイントカード" },
+    { id: "p7_3_1", category: "Eメール読解", difficulty: 3, passage: "...", en: "When is the new meeting time?", options: ["Tuesday", "Wednesday", "Thursday", "Friday"], correctIndex: 2, translation: "...", explanation: "...", keyword: "reschedule", meaning: "予定を変更する" },
+    { id: "p7_3_2", category: "Eメール読解", difficulty: 3, passage: "...", en: "What should employees do?", options: ["Call the manager", "Update calendars", "Send an email", "Cancel the meeting"], correctIndex: 1, translation: "...", explanation: "...", keyword: "conflict", meaning: "重複、衝突" },
+    { id: "p7_4_1", category: "社内広告・告知読解", difficulty: 4, passage: "...", en: "What is required to join?", options: ["Registration", "A membership fee", "A yoga mat", "A manager's approval"], correctIndex: 2, translation: "...", explanation: "...", keyword: "registration", meaning: "登録" },
+    { id: "p7_4_2", category: "社内広告・告知読解", difficulty: 4, passage: "...", en: "When does the class start?", options: ["6 AM", "6 PM", "7 PM", "Every day"], correctIndex: 1, translation: "...", explanation: "...", keyword: "wellness", meaning: "健康" },
+    { id: "p7_5_1", category: "Eメール読解", difficulty: 4, passage: "...", en: "Why is the order delayed?", options: ["Technical issue", "High demand", "Wrong address", "Staff shortage"], correctIndex: 1, translation: "...", explanation: "...", keyword: "patience", meaning: "忍耐" },
+    { id: "p7_5_2", category: "Eメール読解", difficulty: 4, passage: "...", en: "When will the order be shipped?", options: ["Monday", "Wednesday", "Friday", "Next week"], correctIndex: 2, translation: "...", explanation: "...", keyword: "regret", meaning: "残念に思う" }
 ];
+
         // ==========================================
         // 4. データ同期 (Firestore Rules準拠)
         // ==========================================
