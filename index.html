@@ -1,4 +1,6 @@
 </body>
+下書き
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -31,7 +33,7 @@
                 </div>
                 <div>
                     <h1 class="font-bold text-lg text-slate-900 tracking-tight leading-none">TOEIC AI Coach</h1>
-                    <span class="text-[10px] text-indigo-600 font-bold bg-indigo-50 px-1.5 py-0.5 rounded mt-1 inline-block">予測スコア＆目標分析</span>
+                    <span class="text-[10px] text-indigo-600 font-bold bg-indigo-50 px-1.5 py-0.5 rounded mt-1 inline-block">予測スコア＆目標分析対応</span>
                 </div>
             </div>
 
@@ -41,8 +43,9 @@
                     <span class="w-2 h-2 bg-green-500 rounded-full"></span>
                     <span id="header-user-email" class="font-medium max-w-[150px] truncate">ゲスト</span>
                 </div>
-                <button id="btn-show-auth" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-600 font-semibold px-4 py-2 rounded-xl text-sm transition-all duration-200 flex items-center space-x-2">
+         class="bg-indigo-50 hover:bg-indigo-100 text-indigo-600 font-semibold px-4 py-2 rounded-xl text-sm transition-all duration-200 flex items-center space-x-2">
                     <i class="fa-solid fa-user"></i>
+                    <span id="auth-btn-text">ログイン/新規登録</span>
                 </button>
                 <button id="btn-logout" class="hidden text-slate-500 hover:text-red-500 p-2 rounded-lg text-sm transition-colors" title="ログアウト">
                     <i class="fa-solid fa-right-from-bracket text-lg"></i>
@@ -86,6 +89,8 @@
 
                 <div class="pt-4 border-t border-slate-100 mt-4">
                     <div class="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl p-3 text-white text-xs">
+                        <p class="font-bold mb-1"><i class="fa-solid fa-cloud-arrow-up mr-1"></i> 進捗クラウド保存中</p>
+                        <p class="opacity-90 leading-relaxed" id="storage-status-text">現在：オフライン保存中（ログインで同期）</p>
                     </div>
                 </div>
             </div>
@@ -768,79 +773,202 @@
             updateRoadmapPlanUI();
         }
 
-==========================================
-// 3. 問題生成テンプレート (データをここに追加していくだけで無限に増えます)
-// ==========================================
-const PART_TEMPLATES = {
-    part5: [
-        {
-            category: "語彙",
-            sentence: "The marketing director proposed that we should {verb} our promotional campaign.",
-            options: ["modify", "modification", "modifying", "modified"],
-            correctIndex: 0,
-            explanation: "助動詞 should の後には動詞の原形が続きます。"
-        }
-    ],
-    part6: [
-        {
-            category: "長文穴埋め",
-            passage: "Dear Member, I am writing to express my dissatisfaction. For the past two weeks, my connection [ 1 ] unstable.",
-            questions: [
-                { en: "[ 1 ] に入る語は？", options: ["has been", "was", "is", "were"], correctIndex: 0, explanation: "継続を表す現在完了形が必要です。" }
-            ]
-        }
-    ],
-    part7: [
-        {
-            category: "Eメール読解",
-            passage: "Subject: Server Maintenance. Our IT department will be performing upgrades this weekend.",
-            questions: [
-                { en: "What is the purpose?", options: ["Maintenance", "Recruiting", "Funding", "Hiring"], correctIndex: 0, explanation: "件名と本文から読み取れます。" }
-            ]
-        }
-    ]
-};
-
-// ==========================================
-// 4. 生成ロジック
-// ==========================================
-function generateNewQuiz() {
-    const parts = Object.keys(PART_TEMPLATES);
-    const selectedPart = parts[Math.floor(Math.random() * parts.length)];
-    const problems = PART_TEMPLATES[selectedPart];
-    const problem = problems[Math.floor(Math.random() * problems.length)];
-
-    const container = document.getElementById('question-area');
-    const optionsArea = document.getElementById('options-area');
-    
-    // パートごとの表示処理
-    if (selectedPart === 'part5') {
-        container.innerHTML = `<p class="text-lg">${problem.sentence.replace('{verb}', '_____')}</p>`;
-        renderOptions(problem.options, problem.correctIndex, problem.explanation);
-    } else {
-        container.innerHTML = `<p class="font-bold">${problem.category}</p><p class="text-sm bg-slate-100 p-3">${problem.passage}</p>`;
-        // Part 6, 7用の質問表示ロジックをここに展開
-        renderOptions(problem.questions[0].options, problem.questions[0].correctIndex, problem.questions[0].explanation);
-    }
-}
-
-function renderOptions(options, correctIndex, explanation) {
-    const area = document.getElementById('options-area');
-    area.innerHTML = '';
-    options.forEach((opt, idx) => {
-        const btn = document.createElement('button');
-        btn.className = "w-full p-3 border rounded text-left hover:bg-slate-100";
-        btn.innerText = opt;
-        btn.onclick = () => {
-            const feedback = document.getElementById('feedback-area');
-            feedback.classList.remove('hidden');
-            feedback.innerText = (idx === correctIndex) ? "正解！" + explanation : "不正解...";
-        };
-        area.appendChild(btn);
-    });
-}
         // ==========================================
-        // 5. データ同期 (Firestore Rules準拠)
+        // 3. 豊富な問題集 (Part 5 & Part 6 & Part 7)
+        // ==========================================
+        const CATEGORIES = [
+            '語彙', '時制', '関係代名詞', '前置詞・接続詞', '品詞', 
+            '長文穴埋め(レター)', '長文穴埋め(お知らせ)',
+            'Eメール読解', '社内広告・告知読解'
+        ];
+
+        // Part 5 - 短文穴埋め
+        const PART5_BANK = [
+            {
+                id: "p5_1",
+                category: "語彙",
+                difficulty: 3,
+                en: "The marketing director proposed that we should ------- our promotional campaign to target a younger audience.",
+                options: ["modify", "modification", "modifying", "modified"],
+                correctIndex: 0,
+                translation: "マーケティングディレクターは、より若い視聴者をターゲットにするためにプロモーションキャンペーンを修正することを提案した。",
+                explanation: "助動詞 should の後には動詞の原形が続きます。したがって modify（〜を修正する）が正解です。",
+                keyword: "modify",
+                meaning: "修正する、改める"
+            },
+            {
+                id: "p5_2",
+                category: "時制",
+                difficulty: 2,
+                en: "Ms. Tanaka ------- as the lead software engineer since the project launched two years ago.",
+                options: ["has served", "serves", "is serving", "served"],
+                correctIndex: 0,
+                translation: "田中さんは2年前にプロジェクトが開始されて以来、リードソフトウェアエンジニアを務めています。",
+                explanation: "since（〜以来）という過去の起点があるため、現在まで継続している「現在完了形」has served が適切です。",
+                keyword: "serve",
+                meaning: "（役職などを）務める、奉仕する"
+            },
+            {
+                id: "p5_3",
+                category: "品詞",
+                difficulty: 3,
+                en: "The newly hired HR manager handled the union dispute extremely -------.",
+                options: ["professionally", "professional", "professionalism", "profess"],
+                correctIndex: 0,
+                translation: "新しく採用された人事マネージャーは、組合との紛争を極めてプロフェッショナルに対処した。",
+                explanation: "動詞 handled（対処した）を修飾する副詞が必要です。-lyで終わる professionally が最適です。",
+                keyword: "dispute",
+                meaning: "紛争、争い、論争"
+            }
+        ];
+
+        // Part 6 - 長文穴埋め
+        const PART6_BANK = [
+            {
+                id: "p6_1",
+                category: "長文穴埋め(レター)",
+                difficulty: 3,
+                passage: `
+                    <div class="space-y-1 text-xs text-slate-500 font-mono border-b border-dashed border-slate-200 pb-2 mb-3">
+                        <div>To: Member Services &lt;support@networld.com&gt;</div>
+                        <div>From: Kenji Sato &lt;kenji.sato@globalnet.jp&gt;</div>
+                        <div>Date: June 15</div>
+                    </div>
+                    <p>Dear Member Services,</p>
+                    <p>I am writing to express my dissatisfaction with the internet service at my office. For the past two weeks, my connection <strong>[ 空欄 1 ]</strong> unstable, severely impacting our daily operations. We frequently experience disconnections during video conferences.</p>
+                    <p><strong>[ 空欄 2 ]</strong>, I contacted your technical hotline on Tuesday. The representative assured me that a technician would be dispatched the following day. However, no one has arrived yet, and I have received no update on the status of my request.</p>
+                    <p>Our business relies heavily on stable web access. <strong>[ 空欄 3 ]</strong>. Therefore, I demand that a service technician visit my office by tomorrow afternoon at the latest.</p>
+                    <p>Sincerely,<br>Kenji Sato</p>
+                `,
+                questions: [
+                    {
+                        en: "[ 空欄 1 ] に入る最も適切な言葉を選んでください。",
+                        options: ["has been", "was", "will be", "is being"],
+                        correctIndex: 0,
+                        translation: "[ 空欄 1 ]：For the past two weeks, my connection [has been] unstable...",
+                        explanation: "「For the past two weeks (この2週間ずっと)」という現在までの継続状態なので、現在完了形である has been が正答です。",
+                        keyword: "unstable",
+                        meaning: "不安定な"
+                    },
+                    {
+                        en: "[ 空欄 2 ] に入る最も適切な接続語を選んでください。",
+                        options: ["Consequently", "Furthermore", "Instead", "On the contrary"],
+                        correctIndex: 0,
+                        translation: "[ 空欄 2 ]：[Consequently], I contacted...",
+                        explanation: "「2週間回線が不安定だった」という状況に対して、その結末として「連絡を入れた」と繋がっているため、 Consequently（その結果として）が適します。",
+                        keyword: "Consequently",
+                        meaning: "その結果として、したがって"
+                    },
+                    {
+                        en: "[ 空欄 3 ] に入る最も適切な一文を選んでください。",
+                        options: [
+                            "We are unable to perform essential work under these conditions.",
+                            "The installation of the new server was successful.",
+                            "We look forward to receiving your new pricing options.",
+                            "Many customers prefer shopping online nowadays."
+                        ],
+                        correctIndex: 0,
+                        translation: "[ 空欄 3 ]：Our business relies heavily on stable web access. [We are unable to perform essential work under these conditions.]",
+                        explanation: "前後関係に最も適合する一文は、(A)の「この状況下では主要な業務を行うことができません」です。",
+                        keyword: "rely heavily",
+                        meaning: "深く依存する、全面的に頼る"
+                    }
+                ]
+            }
+        ];
+
+        // Part 7 - 長文読解
+        const PART7_BANK = [
+            {
+                id: "p7_1",
+                category: "Eメール読解",
+                difficulty: 4,
+                passage: `
+                    <div class="space-y-2 text-xs font-mono border-b border-dashed border-slate-200 pb-3 mb-3 text-slate-500">
+                        <div><strong>From:</strong> J.Harrison@vanguardtech.com</div>
+                        <div><strong>To:</strong> All staff &lt;staff@vanguardtech.com&gt;</div>
+                        <div><strong>Date:</strong> October 12</div>
+                        <div><strong>Subject:</strong> Server Maintenance & Downtime Window</div>
+                    </div>
+                    <p class="font-bold">Dear Staff,</p>
+                    <p>Please be advised that our IT department will be performing critical infrastructure upgrades on our primary database servers this coming weekend. As a result, the internal communication network will be completely offline from <strong>8:00 AM on Saturday to 5:00 PM on Sunday</strong>.</p>
+                    <p>During this period, you will not be able to access client records. If you have urgent project deadlines, we highly recommend downloading necessary files to your local hard drives prior to Friday evening.</p>
+                `,
+                questions: [
+                    {
+                        en: "What is the primary purpose of this e-mail?",
+                        options: [
+                            "To announce temporary network unavailability",
+                            "To recruit new technicians for the IT team",
+                            "To request funding for server upgrades",
+                            "To change the deadline for a company project"
+                        ],
+                        correctIndex: 0,
+                        translation: "このEメールの主な目的は何ですか？",
+                        explanation: "週末にサーバーアップグレードのため、ネットワークが完全にオフラインになることをアナウンスしているため、(A)が正解です。",
+                        keyword: "unavailability",
+                        meaning: "利用不可能、無効"
+                    },
+                    {
+                        en: "According to the e-mail, what are employees advised to do before Friday evening?",
+                        options: [
+                            "Contact Julian Harrison directly",
+                            "Save essential files to their local devices",
+                            "Work from home over the weekend",
+                            "Submit their timesheets early"
+                        ],
+                        correctIndex: 1,
+                        translation: "Eメールによると、従業員は金曜日の夜までに何をすることを勧められていますか？",
+                        explanation: "「downloading necessary files to your local hard drives (ローカルドライブにファイルをダウンロードしておくこと)」とあるため、(B)が合致をします。",
+                        keyword: "prior to",
+                        meaning: "〜に先立って、〜より前に"
+                    }
+                ]
+            }
+        ];
+
+        // 弱点集中講義
+        const LESSONS_DATABASE = {
+            "語彙": {
+                title: "TOEIC頻出語彙の攻略",
+                category: "語彙",
+                content: `<h4><strong>コロケーションで覚えるのが語彙攻略の王道</strong></h4><p>単語を1語だけで覚えず、動詞＋名詞のペアで覚えることで、読解スピードも倍増します。</p>`,
+                checkQ: "Which verb best collocates with 'a survey'?",
+                options: ["conduct", "happen", "insist", "talk"],
+                correctIdx: 0,
+                explanation: "survey（調査）と強く結びつくのは conduct（実施する）です。"
+            },
+            "長文穴埋め(レター)": {
+                title: "Part 6: 長文穴埋めをスピード攻略する前後読解術",
+                category: "長文穴埋め(レター)",
+                content: `<h4><strong>接続語問題は「前後の関係（因果・逆説）」を見定める</strong></h4><p>空欄の前後の文章のトーンを確認し、因果関係（Thereforeなど）か逆説関係（Howeverなど）かを正しく判断します。</p>`,
+                checkQ: "Which transitional word indicates a cause-and-effect relationship?",
+                options: ["Consequently", "Nevertheless", "On the contrary", "Similarly"],
+                correctIdx: 0,
+                explanation: "Consequentlyは「その結果として」を意味し、因果関係を示します。"
+            },
+            "Eメール読解": {
+                title: "Part 7: Eメール読解の構造テンプレート",
+                category: "Eメール読解",
+                content: `<h4><strong>第1パラグラフに「目的」がある</strong></h4><p>何のためにメールを打っているかの結論は、冒頭1〜2文目に必ず登場します。</p>`,
+                checkQ: "Where is the primary purpose of a business email usually stated?",
+                options: ["In the first 1-2 sentences of the body", "At the very end", "Only in the subject line", "In attachments"],
+                correctIdx: 0,
+                explanation: "通常のビジネスEメールでは、冒頭1〜2文目に最も重要な目的・結論が配置されます。"
+            }
+        };
+
+        // アプリケーションステート
+        let currentQuizMode = 'part5'; 
+        let quizQueue = []; 
+        let queueIndex = 0; 
+        let subQuestionIndex = 0; 
+        let scoreCounter = 0;
+        let totalQuestionCount = 0; 
+        let isAnswered = false;
+
+        // ==========================================
+        // 4. データ同期 (Firestore Rules準拠)
         // ==========================================
         async function syncUserData(userId) {
             if (!db || !currentUser) return;
@@ -874,7 +1002,7 @@ function renderOptions(options, correctIndex, explanation) {
         }
 
         // ==========================================
-        // 6. 想定スコア予測エンジン（コアロジック）
+        // 5. 想定スコア予測エンジン（コアロジック）
         // ==========================================
         function calculatePredictedReadingScore() {
             const stats = inMemoryData.stats;
@@ -916,7 +1044,7 @@ function renderOptions(options, correctIndex, explanation) {
         }
 
         // ==========================================
-        // 7. 画面切り替え & 目標/ロードマップ初期設定
+        // 6. 画面切り替え & 目標/ロードマップ初期設定
         // ==========================================
         window.switchView = function(viewName) {
             document.getElementById('view-dashboard').classList.add('hidden');
@@ -1086,7 +1214,7 @@ function renderOptions(options, correctIndex, explanation) {
         }
 
         // ==========================================
-        // 8. クイズ制御 (Part 5, Part 6, Part 7)
+        // 7. クイズ制御 (Part 5, Part 6, Part 7)
         // ==========================================
         window.startQuizSession = function(mode) {
             currentQuizMode = mode;
@@ -1293,7 +1421,7 @@ function renderOptions(options, correctIndex, explanation) {
         }
 
         // ==========================================
-        // 9. ダッシュボード進捗描画
+        // 8. ダッシュボード進捗描画
         // ==========================================
         function updateStatsDashboard() {
             const stats = inMemoryData.stats;
@@ -1403,7 +1531,7 @@ function renderOptions(options, correctIndex, explanation) {
         }
 
         // ==========================================
-        // 10. 単語登録 & フラッシュカード
+        // 9. 単語登録 & フラッシュカード
         // ==========================================
         let activeFlashIndex = 0;
         let showFront = true;
@@ -1515,7 +1643,7 @@ function renderOptions(options, correctIndex, explanation) {
         }
 
         // ==========================================
-        // 11. パーソナルレッスン制御
+        // 10. パーソナルレッスン制御
         // ==========================================
         let currentOpenLessonKey = null;
 
@@ -1610,78 +1738,7 @@ function renderOptions(options, correctIndex, explanation) {
         };
 
         // ==========================================
-        // 12. ユーザーログイン・登録
-        // ==========================================
-        let isSignUpMode = false;
-
-        window.openAuthModal = () => document.getElementById('auth-modal').classList.remove('hidden');
-        window.closeAuthModal = () => document.getElementById('auth-modal').classList.add('hidden');
-        window.continueAsGuest = () => {
-            closeAuthModal();
-            showToast("ゲストとして続行中", "info");
-        }
-
-        document.getElementById('tab-login').onclick = () => {
-            isSignUpMode = false;
-            document.getElementById('tab-login').className = "flex-1 text-center font-bold text-sm text-indigo-600 border-b-2 border-indigo-600 pb-2";
-            document.getElementById('tab-signup').className = "flex-1 text-center font-bold text-sm text-slate-400 pb-2";
-            document.getElementById('auth-submit-btn').innerHTML = "<span>ログイン</span>";
-        };
-
-        document.getElementById('tab-signup').onclick = () => {
-            isSignUpMode = true;
-            document.getElementById('tab-signup').className = "flex-1 text-center font-bold text-sm text-indigo-600 border-b-2 border-indigo-600 pb-2";
-            document.getElementById('tab-login').className = "flex-1 text-center font-bold text-sm text-slate-400 pb-2";
-            document.getElementById('auth-submit-btn').innerHTML = "<span>新規登録</span>";
-        };
-
-        window.handleAuthSubmit = async function(event) {
-            event.preventDefault();
-            const email = document.getElementById('auth-email').value.trim();
-            const pw = document.getElementById('auth-password').value.trim();
-            if (!auth) return;
-
-            try {
-                if (isSignUpMode) {
-                    await createUserWithEmailAndPassword(auth, email, pw);
-                    showToast("登録完了！", "success");
-                } else {
-                    await signInWithEmailAndPassword(auth, email, pw);
-                    showToast("ログイン成功！", "success");
-                }
-                closeAuthModal();
-            } catch (err) {
-                showToast(`エラー: ${err.message}`, "danger");
-            }
-        };
-
-        document.getElementById('btn-logout').onclick = async () => {
-            if (auth) {
-                await signOut(auth);
-                location.reload();
-            }
-        };
-
-        function updateUIForUser(user) {
-            const btnAuth = document.getElementById('btn-show-auth');
-            const btnLogout = document.getElementById('btn-logout');
-            const profileWidget = document.getElementById('user-profile-widget');
-            const userEmailSpan = document.getElementById('header-user-email');
-
-            if (user && !user.isAnonymous) {
-                btnAuth.classList.add('hidden');
-                btnLogout.classList.remove('hidden');
-                profileWidget.classList.remove('hidden');
-                userEmailSpan.innerText = user.email;
-            } else {
-                btnAuth.classList.remove('hidden');
-                btnLogout.classList.add('hidden');
-                profileWidget.classList.add('hidden');
-            }
-        }
-
-        // ==========================================
-        // 13. ユーティリティ & 起動
+        // 11. ユーティリティ & 起動
         // ==========================================
         window.showToast = function(message, type = "info") {
             const container = document.getElementById('toast-container');
