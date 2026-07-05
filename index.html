@@ -768,91 +768,79 @@
             updateRoadmapPlanUI();
         }
 
-        // ==========================================
-        // 3. 豊富な問題集 (Part 5 & Part 6 & Part 7)
-        // ==========================================
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <title>TOEIC Automatic Quiz Generator</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-slate-50 p-6">
-    <div class="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-lg">
-        <h1 class="text-2xl font-bold mb-6 text-slate-800">TOEIC自動生成問題</h1>
-        <div id="quiz-container">
-            <div id="question-area" class="mb-6"></div>
-            <div id="options-area" class="grid gap-3"></div>
-            <div id="feedback-area" class="mt-6 p-4 rounded hidden"></div>
-        </div>
-        <button onclick="generateNewQuiz()" class="mt-8 w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition">次の問題を生成</button>
-    </div>
-
-    <script>
-        // 問題生成のルールベースデータ
-        const TEMPLATES = {
-            vocabulary: [
-                {
-                    sentence: "The CEO decided to {verb} the proposal to improve efficiency.",
-                    options: ["implement", "implementation", "implemented", "implementing"],
-                    correct: 0,
-                    explanation: "to不定詞の後には動詞の原形が来ます。"
-                },
-                {
-                    sentence: "Our team is {adverb} working on the new software update.",
-                    options: ["currently", "current", "currency", "currencie"],
-                    correct: 0,
-                    explanation: "進行形の動詞を修飾するため、副詞が必要です。"
-                }
-            ]
-        };
-
-        function generateNewQuiz() {
-            const container = document.getElementById('question-area');
-            const optionsArea = document.getElementById('options-area');
-            const feedback = document.getElementById('feedback-area');
-            
-            // ランダムにテンプレートを選択
-            const template = TEMPLATES.vocabulary[Math.floor(Math.random() * TEMPLATES.vocabulary.length)];
-            
-            // 問題文の表示
-            container.innerHTML = `<p class="text-lg text-slate-700">${template.sentence.replace('{verb}', '_____').replace('{adverb}', '_____')}</p>`;
-            
-            // 選択肢の表示
-            optionsArea.innerHTML = '';
-            template.options.forEach((opt, index) => {
-                const btn = document.createElement('button');
-                btn.className = "w-full p-3 border rounded text-left hover:bg-slate-100 transition";
-                btn.innerText = opt;
-                btn.onclick = () => checkAnswer(index, template);
-                optionsArea.appendChild(btn);
-            });
-            
-            feedback.className = "mt-6 p-4 rounded hidden";
+==========================================
+// 3. 問題生成テンプレート (データをここに追加していくだけで無限に増えます)
+// ==========================================
+const PART_TEMPLATES = {
+    part5: [
+        {
+            category: "語彙",
+            sentence: "The marketing director proposed that we should {verb} our promotional campaign.",
+            options: ["modify", "modification", "modifying", "modified"],
+            correctIndex: 0,
+            explanation: "助動詞 should の後には動詞の原形が続きます。"
         }
+    ],
+    part6: [
+        {
+            category: "長文穴埋め",
+            passage: "Dear Member, I am writing to express my dissatisfaction. For the past two weeks, my connection [ 1 ] unstable.",
+            questions: [
+                { en: "[ 1 ] に入る語は？", options: ["has been", "was", "is", "were"], correctIndex: 0, explanation: "継続を表す現在完了形が必要です。" }
+            ]
+        }
+    ],
+    part7: [
+        {
+            category: "Eメール読解",
+            passage: "Subject: Server Maintenance. Our IT department will be performing upgrades this weekend.",
+            questions: [
+                { en: "What is the purpose?", options: ["Maintenance", "Recruiting", "Funding", "Hiring"], correctIndex: 0, explanation: "件名と本文から読み取れます。" }
+            ]
+        }
+    ]
+};
 
-        function checkAnswer(index, template) {
+// ==========================================
+// 4. 生成ロジック
+// ==========================================
+function generateNewQuiz() {
+    const parts = Object.keys(PART_TEMPLATES);
+    const selectedPart = parts[Math.floor(Math.random() * parts.length)];
+    const problems = PART_TEMPLATES[selectedPart];
+    const problem = problems[Math.floor(Math.random() * problems.length)];
+
+    const container = document.getElementById('question-area');
+    const optionsArea = document.getElementById('options-area');
+    
+    // パートごとの表示処理
+    if (selectedPart === 'part5') {
+        container.innerHTML = `<p class="text-lg">${problem.sentence.replace('{verb}', '_____')}</p>`;
+        renderOptions(problem.options, problem.correctIndex, problem.explanation);
+    } else {
+        container.innerHTML = `<p class="font-bold">${problem.category}</p><p class="text-sm bg-slate-100 p-3">${problem.passage}</p>`;
+        // Part 6, 7用の質問表示ロジックをここに展開
+        renderOptions(problem.questions[0].options, problem.questions[0].correctIndex, problem.questions[0].explanation);
+    }
+}
+
+function renderOptions(options, correctIndex, explanation) {
+    const area = document.getElementById('options-area');
+    area.innerHTML = '';
+    options.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = "w-full p-3 border rounded text-left hover:bg-slate-100";
+        btn.innerText = opt;
+        btn.onclick = () => {
             const feedback = document.getElementById('feedback-area');
             feedback.classList.remove('hidden');
-            if(index === template.correct) {
-                feedback.className = "mt-6 p-4 rounded bg-green-100 text-green-800";
-                feedback.innerText = "正解！ " + template.explanation;
-            } else {
-                feedback.className = "mt-6 p-4 rounded bg-red-100 text-red-800";
-                feedback.innerText = "不正解です。もう一度考えましょう。";
-            }
-        }
-
-        // 初回ロード
-        generateNewQuiz();
-    </script>
-</body>
-</html>
-
-
+            feedback.innerText = (idx === correctIndex) ? "正解！" + explanation : "不正解...";
+        };
+        area.appendChild(btn);
+    });
+}
         // ==========================================
-        // 4. データ同期 (Firestore Rules準拠)
+        // 5. データ同期 (Firestore Rules準拠)
         // ==========================================
         async function syncUserData(userId) {
             if (!db || !currentUser) return;
@@ -886,7 +874,7 @@
         }
 
         // ==========================================
-        // 5. 想定スコア予測エンジン（コアロジック）
+        // 6. 想定スコア予測エンジン（コアロジック）
         // ==========================================
         function calculatePredictedReadingScore() {
             const stats = inMemoryData.stats;
@@ -928,7 +916,7 @@
         }
 
         // ==========================================
-        // 6. 画面切り替え & 目標/ロードマップ初期設定
+        // 7. 画面切り替え & 目標/ロードマップ初期設定
         // ==========================================
         window.switchView = function(viewName) {
             document.getElementById('view-dashboard').classList.add('hidden');
@@ -1098,7 +1086,7 @@
         }
 
         // ==========================================
-        // 7. クイズ制御 (Part 5, Part 6, Part 7)
+        // 8. クイズ制御 (Part 5, Part 6, Part 7)
         // ==========================================
         window.startQuizSession = function(mode) {
             currentQuizMode = mode;
@@ -1305,7 +1293,7 @@
         }
 
         // ==========================================
-        // 8. ダッシュボード進捗描画
+        // 9. ダッシュボード進捗描画
         // ==========================================
         function updateStatsDashboard() {
             const stats = inMemoryData.stats;
@@ -1415,7 +1403,7 @@
         }
 
         // ==========================================
-        // 9. 単語登録 & フラッシュカード
+        // 10. 単語登録 & フラッシュカード
         // ==========================================
         let activeFlashIndex = 0;
         let showFront = true;
@@ -1527,7 +1515,7 @@
         }
 
         // ==========================================
-        // 10. パーソナルレッスン制御
+        // 11. パーソナルレッスン制御
         // ==========================================
         let currentOpenLessonKey = null;
 
@@ -1622,7 +1610,7 @@
         };
 
         // ==========================================
-        // 11. ユーザーログイン・登録
+        // 12. ユーザーログイン・登録
         // ==========================================
         let isSignUpMode = false;
 
@@ -1693,7 +1681,7 @@
         }
 
         // ==========================================
-        // 12. ユーティリティ & 起動
+        // 13. ユーティリティ & 起動
         // ==========================================
         window.showToast = function(message, type = "info") {
             const container = document.getElementById('toast-container');
