@@ -30,7 +30,7 @@
                     <i class="fa-solid fa-graduation-cap text-lg"></i>
                 </div>
                 <div>
-                    <h1 class="font-bold text-lg text-slate-900 tracking-tight leading-none">TOEIC Learning</h1>
+                    <h1 class="font-bold text-lg text-slate-900 tracking-tight leading-none">TOEIC AI Coach</h1>
                     <span class="text-[10px] text-indigo-600 font-bold bg-indigo-50 px-1.5 py-0.5 rounded mt-1 inline-block">予測スコア＆目標分析</span>
                 </div>
             </div>
@@ -683,7 +683,7 @@
         let db = null;
         let auth = null;
         let currentUser = null;
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'toeic-Learning-personal';
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'toeic-coach-personal';
 
         async function setupFirebase() {
             try {
@@ -961,41 +961,9 @@
         let scoreCounter = 0;
         let totalQuestionCount = 0; 
         let isAnswered = false;
-// ==========================================
-// 4. ランダム出題 & クイズロジック
-// ==========================================
 
-// 指定カテゴリーの問題をランダムに取得する関数
-async function getQuestionByCategory(mode) {
-    // 既存のPART5_BANK等は使わず、AI生成関数を呼び出す
-    const aiQuestion = await generateAIQuestion(mode); 
-    return aiQuestion;
-}
-
-// 問題演習画面を更新する関数（簡易版）
-function startQuiz(mode) {
-    const question = getQuestionByCategory(mode);
-    
-    // ここでUIに反映させる処理
-    // 例: document.getElementById('quiz-text').innerText = question.en;
-    
-    console.log("出題データ:", question);
-    
-    // ユーザーが回答を選択した時の処理
-    isAnswered = false;
-}
-
-// 演習ボタンクリック時のイベントリスナー登録例
-document.addEventListener('DOMContentLoaded', () => {
-    // 例: メニューボタンにクリックイベントを追加
-    /*
-    document.getElementById('part5-btn').addEventListener('click', () => {
-        startQuiz('Part 5');
-    });
-    */
-});
         // ==========================================
-        // 5. データ同期 (Firestore Rules準拠)
+        // 4. データ同期 (Firestore Rules準拠)
         // ==========================================
         async function syncUserData(userId) {
             if (!db || !currentUser) return;
@@ -1029,7 +997,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // ==========================================
-        // 6. 想定スコア予測エンジン（コアロジック）
+        // 5. 想定スコア予測エンジン（コアロジック）
         // ==========================================
         function calculatePredictedReadingScore() {
             const stats = inMemoryData.stats;
@@ -1071,7 +1039,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // ==========================================
-        // 7. 画面切り替え & 目標/ロードマップ初期設定
+        // 6. 画面切り替え & 目標/ロードマップ初期設定
         // ==========================================
         window.switchView = function(viewName) {
             document.getElementById('view-dashboard').classList.add('hidden');
@@ -1241,18 +1209,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // ==========================================
-        // 8. クイズ制御 (Part 5, Part 6, Part 7)
+        // 7. クイズ制御 (Part 5, Part 6, Part 7)
         // ==========================================
-        window.startQuizSession = async function(mode) {
-    // ロード中はローディング表示を出すなどの処理を入れると親切です
-    document.getElementById('quiz-question-en').innerText = "AIが問題を作成中...";
-    
-    // getQuestionByCategoryを待機する
-    const question = await getQuestionByCategory(mode);
-    
-    // 取得した1問を配列に格納
-    quizQueue = [question]; 
-    // 
+        window.startQuizSession = function(mode) {
             currentQuizMode = mode;
             document.getElementById('quiz-mode-selector').classList.add('hidden');
             document.getElementById('quiz-workspace').classList.remove('hidden');
@@ -1457,7 +1416,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // ==========================================
-        // 9. ダッシュボード進捗描画
+        // 8. ダッシュボード進捗描画
         // ==========================================
         function updateStatsDashboard() {
             const stats = inMemoryData.stats;
@@ -1567,7 +1526,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // ==========================================
-        // 10. 単語登録 & フラッシュカード
+        // 9. 単語登録 & フラッシュカード
         // ==========================================
         let activeFlashIndex = 0;
         let showFront = true;
@@ -1774,7 +1733,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         // ==========================================
-        // 12. ユーザーログイン・登録
+        // 11. ユーザーログイン・登録
         // ==========================================
         let isSignUpMode = false;
 
@@ -1845,7 +1804,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // ==========================================
-        // 13. ユーティリティ & 起動
+        // 12. ユーティリティ & 起動
         // ==========================================
         window.showToast = function(message, type = "info") {
             const container = document.getElementById('toast-container');
@@ -1877,52 +1836,4 @@ document.addEventListener('DOMContentLoaded', () => {
     // ここにアプリの初期化処理を入れる
   });
 </script>
-    // ==========================================
-// AI自動問題生成ロジック
-// ==========================================
-
-const GEMINI_API_KEY = AQ.Ab8RN6KVL0NgNhUt0wtG9SwsxUK8scry7ku-VQXB6pe-jpO8GQ // Google AI Studioで取得したキー
-
-async function generateAIQuestion(part) {
-    const prompt = `あなたはTOEICのプロ講師です。${part}の形式で、難易度3の新しい問題を1問作成してください。
-    必ず以下のJSON形式で返してください。
-    {
-        "en": "問題文",
-        "options": ["選択肢1", "選択肢2", "選択肢3", "選択肢4"],
-        "correctIndex": 0,
-        "explanation": "解説文",
-        "keyword": "キーワード"
-    }`;
-
-    try {
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${GEMINI_API_KEY}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                contents: [{ parts: [{ text: prompt }] }],
-                generationConfig: { responseMimeType: "application/json" }
-            })
-        });
-
-        const data = await response.json();
-        return JSON.parse(data.candidates[0].content.parts[0].text);
-    } catch (error) {
-        console.error("AI問題生成エラー:", error);
-        return null;
-    }
-}
-
-// 演習ボタンクリック時の処理
-window.handleStartQuiz = async (part) => {
-    const display = document.getElementById('quiz-display');
-    display.innerHTML = "AIが問題を生成中です...";
-    
-    const question = await generateAIQuestion(part);
-    
-    if (question) {
-        renderQuizUI(question); // 既存の表示ロジックへ
-    } else {
-        display.innerHTML = "問題の生成に失敗しました。APIキーを確認してください。";
-    }
-};
 </body>
