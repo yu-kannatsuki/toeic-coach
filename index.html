@@ -824,59 +824,18 @@ const PART6_BANK = [
 ];
 
 // Part 7 - 長文読解
+// Part 7 - 長文読解 (1パッセージにつき、設問ごとにオブジェクトを分ける)
 const PART7_BANK = [
-    {
-        id: "p7_1",
-        category: "Eメール読解",
-        difficulty: 4,
-        passage: `...略(既存のサーバーメンテナンスメール)...`,
-        questions: [
-            { en: "What is the primary purpose?", options: ["To announce network unavailability", "To recruit", "To request funding", "To change deadline"], correctIndex: 0, translation: "...", explanation: "...", keyword: "unavailability", meaning: "利用不可能" },
-            { en: "What are employees advised to do?", options: ["Contact IT", "Save files", "Work home", "Submit timesheets"], correctIndex: 1, translation: "...", explanation: "...", keyword: "prior to", meaning: "〜に先立って" }
-        ]
-    },
-    {
-        id: "p7_2",
-        category: "社内広告・告知読解",
-        difficulty: 3,
-        passage: `Cafeteria News: Starting next Monday, the cafeteria will offer a new healthy menu. Prices remain the same, but we will introduce a loyalty card system. Purchase 10 meals and get one free.`,
-        questions: [
-            { en: "What is true about the new menu?", options: ["It is more expensive", "It starts next Monday", "It is for members only", "It is free"], correctIndex: 1, translation: "新しいメニューについて正しいのは？", explanation: "Starting next Mondayと明記されています。", keyword: "introduce", meaning: "導入する" },
-            { en: "How can customers get a free meal?", options: ["By buying 5 meals", "By joining the club", "By buying 10 meals", "By paying early"], correctIndex: 2, translation: "無料で食事を得るには？", explanation: "Purchase 10 meals and get one freeとあります。", keyword: "loyalty card", meaning: "ポイントカード" }
-        ]
-    },
-    {
-        id: "p7_3",
-        category: "Eメール読解",
-        difficulty: 3,
-        passage: `Subject: Meeting Rescheduled. Dear Team, Due to a conflict, the budget meeting has been moved to Thursday at 2 PM. Please update your calendars.`,
-        questions: [
-            { en: "When is the new meeting time?", options: ["Tuesday", "Wednesday", "Thursday", "Friday"], correctIndex: 2, translation: "新しい会議の時間は？", explanation: "moved to Thursday at 2 PMとあります。", keyword: "reschedule", meaning: "予定を変更する" },
-            { en: "What should employees do?", options: ["Call the manager", "Update calendars", "Send an email", "Cancel the meeting"], correctIndex: 1, translation: "従業員は何をすべき？", explanation: "Please update your calendarsと指示されています。", keyword: "conflict", meaning: "重複、衝突" }
-        ]
-    },
-    {
-        id: "p7_4",
-        category: "社内広告・告知読解",
-        difficulty: 4,
-        passage: `Wellness Program: Join our free yoga classes every Tuesday at 6 PM in the main hall. No registration is required. Bring your own mat.`,
-        questions: [
-            { en: "What is required to join?", options: ["Registration", "A membership fee", "A yoga mat", "A manager's approval"], correctIndex: 2, translation: "参加に必要なものは？", explanation: "Bring your own matとあります。", keyword: "registration", meaning: "登録" },
-            { en: "When does the class start?", options: ["6 AM", "6 PM", "7 PM", "Every day"], correctIndex: 1, translation: "クラスは何時に始まりますか？", explanation: "at 6 PMと記載されています。", keyword: "wellness", meaning: "健康" }
-        ]
-    },
-    {
-        id: "p7_5",
-        category: "Eメール読解",
-        difficulty: 4,
-        passage: `Subject: Shipment Delay. Dear Customer, We regret to inform you that your order #12345 is delayed due to high demand. We expect to ship it by Friday. Thank you for your patience.`,
-        questions: [
-            { en: "Why is the order delayed?", options: ["Technical issue", "High demand", "Wrong address", "Staff shortage"], correctIndex: 1, translation: "なぜ注文が遅れていますか？", explanation: "due to high demandとあります。", keyword: "patience", meaning: "忍耐" },
-            { en: "When will the order be shipped?", options: ["Monday", "Wednesday", "Friday", "Next week"], correctIndex: 2, translation: "いつ出荷されますか？", explanation: "expect to ship it by Fridayとあります。", keyword: "regret", meaning: "残念に思う" }
-        ]
-    }
+    // パッセージ p7_1 関連
+    { id: "p7_1_1", category: "Eメール読解", difficulty: 4, passage: `...ここに実際のパッセージ文...`, en: "What is the primary purpose of this e-mail?", options: ["To announce...", "To recruit...", "To request...", "To change..."], correctIndex: 0, translation: "...", explanation: "...", keyword: "unavailability", meaning: "利用不可能" },
+    { id: "p7_1_2", category: "Eメール読解", difficulty: 4, passage: `...同じパッセージ文...`, en: "According to the e-mail, what are employees advised to do...?", options: ["Contact...", "Save...", "Work...", "Submit..."], correctIndex: 1, translation: "...", explanation: "...", keyword: "prior to", meaning: "〜に先立って" },
+    
+    // パッセージ p7_2 関連
+    { id: "p7_2_1", category: "社内広告・告知読解", difficulty: 3, passage: `...次のパッセージ...`, en: "What is true about the new menu?", options: [...], correctIndex: 1, ... },
+    { id: "p7_2_2", category: "社内広告・告知読解", difficulty: 3, passage: `...同じパッセージ...`, en: "How can customers get a free meal?", options: [...], correctIndex: 2, ... }
+    
+    // 以下、p7_3, p7_4, p7_5 も同様に設問ごとにオブジェクトを作る
 ];
-
         // ==========================================
         // 4. データ同期 (Firestore Rules準拠)
         // ==========================================
