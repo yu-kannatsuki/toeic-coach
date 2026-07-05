@@ -966,21 +966,10 @@
 // ==========================================
 
 // 指定カテゴリーの問題をランダムに取得する関数
-function getQuestionByCategory(category) {
-    let pool = [];
-    if (category.includes('Part 5')) {
-        pool = PART5_BANK;
-    } else if (category.includes('Part 6')) {
-        pool = PART6_BANK;
-    } else if (category.includes('Part 7')) {
-        pool = PART7_BANK;
-    } else {
-        // カテゴリーが指定されない場合は全問題からランダム
-        pool = [...PART5_BANK, ...PART6_BANK, ...PART7_BANK];
-    }
-    
-    // ランダムに1問抽出
-    return pool[Math.floor(Math.random() * pool.length)];
+async function getQuestionByCategory(mode) {
+    // 既存のPART5_BANK等は使わず、AI生成関数を呼び出す
+    const aiQuestion = await generateAIQuestion(mode); 
+    return aiQuestion;
 }
 
 // 問題演習画面を更新する関数（簡易版）
