@@ -1243,7 +1243,16 @@ document.addEventListener('DOMContentLoaded', () => {
         // ==========================================
         // 8. クイズ制御 (Part 5, Part 6, Part 7)
         // ==========================================
-        window.startQuizSession = function(mode) {
+        window.startQuizSession = async function(mode) {
+    // ロード中はローディング表示を出すなどの処理を入れると親切です
+    document.getElementById('quiz-question-en').innerText = "AIが問題を作成中...";
+    
+    // getQuestionByCategoryを待機する
+    const question = await getQuestionByCategory(mode);
+    
+    // 取得した1問を配列に格納
+    quizQueue = [question]; 
+    // 
             currentQuizMode = mode;
             document.getElementById('quiz-mode-selector').classList.add('hidden');
             document.getElementById('quiz-workspace').classList.remove('hidden');
