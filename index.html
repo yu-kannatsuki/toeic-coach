@@ -961,9 +961,52 @@
         let scoreCounter = 0;
         let totalQuestionCount = 0; 
         let isAnswered = false;
+// ==========================================
+// 4. ランダム出題 & クイズロジック
+// ==========================================
 
+// 指定カテゴリーの問題をランダムに取得する関数
+function getQuestionByCategory(category) {
+    let pool = [];
+    if (category.includes('Part 5')) {
+        pool = PART5_BANK;
+    } else if (category.includes('Part 6')) {
+        pool = PART6_BANK;
+    } else if (category.includes('Part 7')) {
+        pool = PART7_BANK;
+    } else {
+        // カテゴリーが指定されない場合は全問題からランダム
+        pool = [...PART5_BANK, ...PART6_BANK, ...PART7_BANK];
+    }
+    
+    // ランダムに1問抽出
+    return pool[Math.floor(Math.random() * pool.length)];
+}
+
+// 問題演習画面を更新する関数（簡易版）
+function startQuiz(mode) {
+    const question = getQuestionByCategory(mode);
+    
+    // ここでUIに反映させる処理
+    // 例: document.getElementById('quiz-text').innerText = question.en;
+    
+    console.log("出題データ:", question);
+    
+    // ユーザーが回答を選択した時の処理
+    isAnswered = false;
+}
+
+// 演習ボタンクリック時のイベントリスナー登録例
+document.addEventListener('DOMContentLoaded', () => {
+    // 例: メニューボタンにクリックイベントを追加
+    /*
+    document.getElementById('part5-btn').addEventListener('click', () => {
+        startQuiz('Part 5');
+    });
+    */
+});
         // ==========================================
-        // 4. データ同期 (Firestore Rules準拠)
+        // 5. データ同期 (Firestore Rules準拠)
         // ==========================================
         async function syncUserData(userId) {
             if (!db || !currentUser) return;
@@ -997,7 +1040,7 @@
         }
 
         // ==========================================
-        // 5. 想定スコア予測エンジン（コアロジック）
+        // 6. 想定スコア予測エンジン（コアロジック）
         // ==========================================
         function calculatePredictedReadingScore() {
             const stats = inMemoryData.stats;
@@ -1039,7 +1082,7 @@
         }
 
         // ==========================================
-        // 6. 画面切り替え & 目標/ロードマップ初期設定
+        // 7. 画面切り替え & 目標/ロードマップ初期設定
         // ==========================================
         window.switchView = function(viewName) {
             document.getElementById('view-dashboard').classList.add('hidden');
@@ -1209,7 +1252,7 @@
         }
 
         // ==========================================
-        // 7. クイズ制御 (Part 5, Part 6, Part 7)
+        // 8. クイズ制御 (Part 5, Part 6, Part 7)
         // ==========================================
         window.startQuizSession = function(mode) {
             currentQuizMode = mode;
@@ -1416,7 +1459,7 @@
         }
 
         // ==========================================
-        // 8. ダッシュボード進捗描画
+        // 9. ダッシュボード進捗描画
         // ==========================================
         function updateStatsDashboard() {
             const stats = inMemoryData.stats;
@@ -1526,7 +1569,7 @@
         }
 
         // ==========================================
-        // 9. 単語登録 & フラッシュカード
+        // 10. 単語登録 & フラッシュカード
         // ==========================================
         let activeFlashIndex = 0;
         let showFront = true;
@@ -1733,7 +1776,7 @@
         };
 
         // ==========================================
-        // 11. ユーザーログイン・登録
+        // 12. ユーザーログイン・登録
         // ==========================================
         let isSignUpMode = false;
 
@@ -1804,7 +1847,7 @@
         }
 
         // ==========================================
-        // 12. ユーティリティ & 起動
+        // 13. ユーティリティ & 起動
         // ==========================================
         window.showToast = function(message, type = "info") {
             const container = document.getElementById('toast-container');
