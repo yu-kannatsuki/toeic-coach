@@ -771,196 +771,85 @@
         // ==========================================
         // 3. 豊富な問題集 (Part 5 & Part 6 & Part 7)
         // ==========================================
-        const CATEGORIES = [
-            '語彙', '時制', '関係代名詞', '前置詞・接続詞', '品詞', 
-            '長文穴埋め(レター)', '長文穴埋め(お知らせ)',
-            'Eメール読解', '社内広告・告知読解'
-        ];
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>TOEIC Automatic Quiz Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 p-6">
+    <div class="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-lg">
+        <h1 class="text-2xl font-bold mb-6 text-slate-800">TOEIC自動生成問題</h1>
+        <div id="quiz-container">
+            <div id="question-area" class="mb-6"></div>
+            <div id="options-area" class="grid gap-3"></div>
+            <div id="feedback-area" class="mt-6 p-4 rounded hidden"></div>
+        </div>
+        <button onclick="generateNewQuiz()" class="mt-8 w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition">次の問題を生成</button>
+    </div>
 
-        // Part 5 - 短文穴埋め
-        const PART5_BANK = [
-            {
-                id: "p5_1",
-                category: "語彙",
-                difficulty: 3,
-                en: "The marketing director proposed that we should ------- our promotional campaign to target a younger audience.",
-                options: ["modify", "modification", "modifying", "modified"],
-                correctIndex: 0,
-                translation: "マーケティングディレクターは、より若い視聴者をターゲットにするためにプロモーションキャンペーンを修正することを提案した。",
-                explanation: "助動詞 should の後には動詞の原形が続きます。したがって modify（〜を修正する）が正解です。",
-                keyword: "modify",
-                meaning: "修正する、改める"
-            },
-            {
-                id: "p5_2",
-                category: "時制",
-                difficulty: 2,
-                en: "Ms. Tanaka ------- as the lead software engineer since the project launched two years ago.",
-                options: ["has served", "serves", "is serving", "served"],
-                correctIndex: 0,
-                translation: "田中さんは2年前にプロジェクトが開始されて以来、リードソフトウェアエンジニアを務めています。",
-                explanation: "since（〜以来）という過去の起点があるため、現在まで継続している「現在完了形」has served が適切です。",
-                keyword: "serve",
-                meaning: "（役職などを）務める、奉仕する"
-            },
-            {
-                id: "p5_3",
-                category: "品詞",
-                difficulty: 3,
-                en: "The newly hired HR manager handled the union dispute extremely -------.",
-                options: ["professionally", "professional", "professionalism", "profess"],
-                correctIndex: 0,
-                translation: "新しく採用された人事マネージャーは、組合との紛争を極めてプロフェッショナルに対処した。",
-                explanation: "動詞 handled（対処した）を修飾する副詞が必要です。-lyで終わる professionally が最適です。",
-                keyword: "dispute",
-                meaning: "紛争、争い、論争"
-            }
-        ];
-
-        // Part 6 - 長文穴埋め
-        const PART6_BANK = [
-            {
-                id: "p6_1",
-                category: "長文穴埋め(レター)",
-                difficulty: 3,
-                passage: `
-                    <div class="space-y-1 text-xs text-slate-500 font-mono border-b border-dashed border-slate-200 pb-2 mb-3">
-                        <div>To: Member Services &lt;support@networld.com&gt;</div>
-                        <div>From: Kenji Sato &lt;kenji.sato@globalnet.jp&gt;</div>
-                        <div>Date: June 15</div>
-                    </div>
-                    <p>Dear Member Services,</p>
-                    <p>I am writing to express my dissatisfaction with the internet service at my office. For the past two weeks, my connection <strong>[ 空欄 1 ]</strong> unstable, severely impacting our daily operations. We frequently experience disconnections during video conferences.</p>
-                    <p><strong>[ 空欄 2 ]</strong>, I contacted your technical hotline on Tuesday. The representative assured me that a technician would be dispatched the following day. However, no one has arrived yet, and I have received no update on the status of my request.</p>
-                    <p>Our business relies heavily on stable web access. <strong>[ 空欄 3 ]</strong>. Therefore, I demand that a service technician visit my office by tomorrow afternoon at the latest.</p>
-                    <p>Sincerely,<br>Kenji Sato</p>
-                `,
-                questions: [
-                    {
-                        en: "[ 空欄 1 ] に入る最も適切な言葉を選んでください。",
-                        options: ["has been", "was", "will be", "is being"],
-                        correctIndex: 0,
-                        translation: "[ 空欄 1 ]：For the past two weeks, my connection [has been] unstable...",
-                        explanation: "「For the past two weeks (この2週間ずっと)」という現在までの継続状態なので、現在完了形である has been が正答です。",
-                        keyword: "unstable",
-                        meaning: "不安定な"
-                    },
-                    {
-                        en: "[ 空欄 2 ] に入る最も適切な接続語を選んでください。",
-                        options: ["Consequently", "Furthermore", "Instead", "On the contrary"],
-                        correctIndex: 0,
-                        translation: "[ 空欄 2 ]：[Consequently], I contacted...",
-                        explanation: "「2週間回線が不安定だった」という状況に対して、その結末として「連絡を入れた」と繋がっているため、 Consequently（その結果として）が適します。",
-                        keyword: "Consequently",
-                        meaning: "その結果として、したがって"
-                    },
-                    {
-                        en: "[ 空欄 3 ] に入る最も適切な一文を選んでください。",
-                        options: [
-                            "We are unable to perform essential work under these conditions.",
-                            "The installation of the new server was successful.",
-                            "We look forward to receiving your new pricing options.",
-                            "Many customers prefer shopping online nowadays."
-                        ],
-                        correctIndex: 0,
-                        translation: "[ 空欄 3 ]：Our business relies heavily on stable web access. [We are unable to perform essential work under these conditions.]",
-                        explanation: "前後関係に最も適合する一文は、(A)の「この状況下では主要な業務を行うことができません」です。",
-                        keyword: "rely heavily",
-                        meaning: "深く依存する、全面的に頼る"
-                    }
-                ]
-            }
-        ];
-
-        // Part 7 - 長文読解
-        const PART7_BANK = [
-            {
-                id: "p7_1",
-                category: "Eメール読解",
-                difficulty: 4,
-                passage: `
-                    <div class="space-y-2 text-xs font-mono border-b border-dashed border-slate-200 pb-3 mb-3 text-slate-500">
-                        <div><strong>From:</strong> J.Harrison@vanguardtech.com</div>
-                        <div><strong>To:</strong> All staff &lt;staff@vanguardtech.com&gt;</div>
-                        <div><strong>Date:</strong> October 12</div>
-                        <div><strong>Subject:</strong> Server Maintenance & Downtime Window</div>
-                    </div>
-                    <p class="font-bold">Dear Staff,</p>
-                    <p>Please be advised that our IT department will be performing critical infrastructure upgrades on our primary database servers this coming weekend. As a result, the internal communication network will be completely offline from <strong>8:00 AM on Saturday to 5:00 PM on Sunday</strong>.</p>
-                    <p>During this period, you will not be able to access client records. If you have urgent project deadlines, we highly recommend downloading necessary files to your local hard drives prior to Friday evening.</p>
-                `,
-                questions: [
-                    {
-                        en: "What is the primary purpose of this e-mail?",
-                        options: [
-                            "To announce temporary network unavailability",
-                            "To recruit new technicians for the IT team",
-                            "To request funding for server upgrades",
-                            "To change the deadline for a company project"
-                        ],
-                        correctIndex: 0,
-                        translation: "このEメールの主な目的は何ですか？",
-                        explanation: "週末にサーバーアップグレードのため、ネットワークが完全にオフラインになることをアナウンスしているため、(A)が正解です。",
-                        keyword: "unavailability",
-                        meaning: "利用不可能、無効"
-                    },
-                    {
-                        en: "According to the e-mail, what are employees advised to do before Friday evening?",
-                        options: [
-                            "Contact Julian Harrison directly",
-                            "Save essential files to their local devices",
-                            "Work from home over the weekend",
-                            "Submit their timesheets early"
-                        ],
-                        correctIndex: 1,
-                        translation: "Eメールによると、従業員は金曜日の夜までに何をすることを勧められていますか？",
-                        explanation: "「downloading necessary files to your local hard drives (ローカルドライブにファイルをダウンロードしておくこと)」とあるため、(B)が合致をします。",
-                        keyword: "prior to",
-                        meaning: "〜に先立って、〜より前に"
-                    }
-                ]
-            }
-        ];
-
-        // 弱点集中講義
-        const LESSONS_DATABASE = {
-            "語彙": {
-                title: "TOEIC頻出語彙の攻略",
-                category: "語彙",
-                content: `<h4><strong>コロケーションで覚えるのが語彙攻略の王道</strong></h4><p>単語を1語だけで覚えず、動詞＋名詞のペアで覚えることで、読解スピードも倍増します。</p>`,
-                checkQ: "Which verb best collocates with 'a survey'?",
-                options: ["conduct", "happen", "insist", "talk"],
-                correctIdx: 0,
-                explanation: "survey（調査）と強く結びつくのは conduct（実施する）です。"
-            },
-            "長文穴埋め(レター)": {
-                title: "Part 6: 長文穴埋めをスピード攻略する前後読解術",
-                category: "長文穴埋め(レター)",
-                content: `<h4><strong>接続語問題は「前後の関係（因果・逆説）」を見定める</strong></h4><p>空欄の前後の文章のトーンを確認し、因果関係（Thereforeなど）か逆説関係（Howeverなど）かを正しく判断します。</p>`,
-                checkQ: "Which transitional word indicates a cause-and-effect relationship?",
-                options: ["Consequently", "Nevertheless", "On the contrary", "Similarly"],
-                correctIdx: 0,
-                explanation: "Consequentlyは「その結果として」を意味し、因果関係を示します。"
-            },
-            "Eメール読解": {
-                title: "Part 7: Eメール読解の構造テンプレート",
-                category: "Eメール読解",
-                content: `<h4><strong>第1パラグラフに「目的」がある</strong></h4><p>何のためにメールを打っているかの結論は、冒頭1〜2文目に必ず登場します。</p>`,
-                checkQ: "Where is the primary purpose of a business email usually stated?",
-                options: ["In the first 1-2 sentences of the body", "At the very end", "Only in the subject line", "In attachments"],
-                correctIdx: 0,
-                explanation: "通常のビジネスEメールでは、冒頭1〜2文目に最も重要な目的・結論が配置されます。"
-            }
+    <script>
+        // 問題生成のルールベースデータ
+        const TEMPLATES = {
+            vocabulary: [
+                {
+                    sentence: "The CEO decided to {verb} the proposal to improve efficiency.",
+                    options: ["implement", "implementation", "implemented", "implementing"],
+                    correct: 0,
+                    explanation: "to不定詞の後には動詞の原形が来ます。"
+                },
+                {
+                    sentence: "Our team is {adverb} working on the new software update.",
+                    options: ["currently", "current", "currency", "currencie"],
+                    correct: 0,
+                    explanation: "進行形の動詞を修飾するため、副詞が必要です。"
+                }
+            ]
         };
 
-        // アプリケーションステート
-        let currentQuizMode = 'part5'; 
-        let quizQueue = []; 
-        let queueIndex = 0; 
-        let subQuestionIndex = 0; 
-        let scoreCounter = 0;
-        let totalQuestionCount = 0; 
-        let isAnswered = false;
+        function generateNewQuiz() {
+            const container = document.getElementById('question-area');
+            const optionsArea = document.getElementById('options-area');
+            const feedback = document.getElementById('feedback-area');
+            
+            // ランダムにテンプレートを選択
+            const template = TEMPLATES.vocabulary[Math.floor(Math.random() * TEMPLATES.vocabulary.length)];
+            
+            // 問題文の表示
+            container.innerHTML = `<p class="text-lg text-slate-700">${template.sentence.replace('{verb}', '_____').replace('{adverb}', '_____')}</p>`;
+            
+            // 選択肢の表示
+            optionsArea.innerHTML = '';
+            template.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full p-3 border rounded text-left hover:bg-slate-100 transition";
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(index, template);
+                optionsArea.appendChild(btn);
+            });
+            
+            feedback.className = "mt-6 p-4 rounded hidden";
+        }
+
+        function checkAnswer(index, template) {
+            const feedback = document.getElementById('feedback-area');
+            feedback.classList.remove('hidden');
+            if(index === template.correct) {
+                feedback.className = "mt-6 p-4 rounded bg-green-100 text-green-800";
+                feedback.innerText = "正解！ " + template.explanation;
+            } else {
+                feedback.className = "mt-6 p-4 rounded bg-red-100 text-red-800";
+                feedback.innerText = "不正解です。もう一度考えましょう。";
+            }
+        }
+
+        // 初回ロード
+        generateNewQuiz();
+    </script>
+</body>
+</html>
+
 
         // ==========================================
         // 4. データ同期 (Firestore Rules準拠)
