@@ -38,7 +38,7 @@
         </section>
 
         <div id="quiz-area" class="hidden bg-white p-6 rounded-2xl shadow-xl fixed inset-4 z-50 overflow-y-auto">
-            <div id="question-text" class="font-bold mb-4"></div>
+            <div id="question-text" class="font-bold mb-4 text-lg"></div>
             <div id="options-box" class="grid gap-2"></div>
             <div id="explanation-box" class="hidden mt-4 bg-slate-50 p-4 rounded-xl">
                 <p id="explanation-text" class="text-sm text-slate-700"></p>
@@ -66,7 +66,6 @@
             document.getElementById('curScore').value = cur;
             document.getElementById('tarScore').value = tar;
             
-            // ロードマップロジック
             let levelComment = "";
             if (cur < 470) levelComment = "【基礎力定着段階】まずは470点を目指しましょう。";
             else if (cur < 600) levelComment = "【一般企業推奨レベル】履歴書に書ける最低ラインです。";
@@ -80,7 +79,10 @@
         }
 
         function addManualVocab() {
-            const entry = { id: Date.now(), en: document.getElementById('new-en').value, options: ["(自己登録)"], correct: 0, exp: document.getElementById('new-exp').value };
+            const en = document.getElementById('new-en').value;
+            const exp = document.getElementById('new-exp').value;
+            if(!en || !exp) return alert("単語と意味を入力してください");
+            const entry = { en, exp };
             let list = JSON.parse(localStorage.getItem('myVocab') || '[]');
             list.push(entry);
             localStorage.setItem('myVocab', JSON.stringify(list));
@@ -116,22 +118,39 @@
             currentExp = q.exp;
             document.getElementById('quiz-area').classList.remove('hidden');
             document.getElementById('question-text').innerText = q.en;
-            document.getElementById('options-box').innerHTML = q.options.map(o => `<button onclick="showExp()" class="p-3 border rounded">${o}</button>`).join('');
+            document.getElementById('options-box').innerHTML = q.options.map(o => `<button onclick="showExp()" class="p-3 border rounded hover:bg-slate-100">${o}</button>`).join('');
         }
 
         function startVocabQuiz() {
             const list = JSON.parse(localStorage.getItem('myVocab') || '[]');
-            if(list.length === 0) return alert("登録なし");
-            const q = list[0];
+            if(list.length < 4) return alert("四択問題作成のため、単語を4語以上登録してください");
+            
+            const targetIdx = Math.floor(Math.random() * list.length);
+            const q = list[targetIdx];
             currentExp = q.exp;
+
+            let options = [q.exp];
+            while(options.length < 4) {
+                const rand = list[Math.floor(Math.random() * list.length)].exp;
+                if(!options.includes(rand)) options.push(rand);
+            }
+            options.sort(() => Math.random() - 0.5);
+
             document.getElementById('quiz-area').classList.remove('hidden');
-            document.getElementById('question-text').innerText = q.en;
-            document.getElementById('options-box').innerHTML = `<button onclick="showExp()" class="p-3 border rounded">${q.exp}</button>`;
+            document.getElementById('question-text').innerText = `「${q.en}」の意味は？`;
+            document.getElementById('options-box').innerHTML = options.map(opt => 
+                `<button onclick="checkVocabAnswer('${opt}', '${q.exp}')" class="p-3 border rounded hover:bg-slate-100">${opt}</button>`
+            ).join('');
+        }
+
+        function checkVocabAnswer(selected, correct) {
+            if(selected === correct) { alert("正解！"); location.reload(); }
+            else { alert("残念！正解は「" + correct + "」です。"); showExp(); }
         }
 
         function showExp() {
             document.getElementById('explanation-box').classList.remove('hidden');
-            document.getElementById('explanation-text').innerText = currentExp;
+            document.getElementById('explanation-text').innerText = "解説: " + currentExp;
         }
 
         window.onload = updateDashboard;
