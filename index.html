@@ -50,6 +50,9 @@
     <script>
         const BANK = { part5: [{ id: 1, en: "The CEO ------- the meeting.", options: ["attend", "attends", "attended", "attending"], correct: 2, exp: "昨日なので過去形。" }] };
 
+        // 状態を管理する変数
+        let currentExp = "";
+
         function saveScore() {
             const d = { cur: document.getElementById('curScore').value, tar: document.getElementById('tarScore').value };
             localStorage.setItem('toeic_data', JSON.stringify(d));
@@ -91,4 +94,37 @@
 
         function exportCSV() {
             const list = JSON.parse(localStorage.getItem('myVocab') || '[]');
-            let csv = "data:text/csv;charset=utf-8,英単語,意味\n" + list.map(i => `"${i.en}","${i.exp}"`).join("\
+            let csv = "data:text/csv;charset=utf-8,英単語,意味\n" + list.map(i => `"${i.en}","${i.exp}"`).join("\n");
+            const link = document.createElement("a");
+            link.setAttribute("href", encodeURI(csv));
+            link.setAttribute("download", "vocab.csv");
+            link.click();
+        }
+
+        function startQuiz(mode) { 
+            const q = BANK[mode][0]; 
+            currentExp = q.exp;
+            document.getElementById('quiz-area').classList.remove('hidden');
+            document.getElementById('question-text').innerText = q.en;
+            document.getElementById('options-box').innerHTML = q.options.map((o, i) => `<button onclick="showExp()" class="p-3 border rounded">${o}</button>`).join('');
+        }
+
+        function startVocabQuiz() {
+            const list = JSON.parse(localStorage.getItem('myVocab') || '[]');
+            if(list.length === 0) return alert("登録なし");
+            const q = list[0];
+            currentExp = q.exp;
+            document.getElementById('quiz-area').classList.remove('hidden');
+            document.getElementById('question-text').innerText = q.en;
+            document.getElementById('options-box').innerHTML = `<button onclick="showExp()" class="p-3 border rounded">${q.exp}</button>`;
+        }
+
+        function showExp() {
+            document.getElementById('explanation-box').classList.remove('hidden');
+            document.getElementById('explanation-text').innerText = currentExp;
+        }
+
+        window.onload = updateDashboard;
+    </script>
+</body>
+</html>
