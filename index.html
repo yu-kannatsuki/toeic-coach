@@ -3,65 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TOEIC Coach Pro - Complete</title>
+    <title>TOEIC Coach Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        .card { background: white; border-radius: 1rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
-    </style>
 </head>
 <body class="bg-slate-50 p-4 md:p-8">
-    <main class="max-w-lg mx-auto space-y-6">
-        <h1 class="text-2xl font-bold text-center">TOEIC Coach Pro</h1>
+    <main class="max-w-xl mx-auto space-y-6">
+        <h1 class="text-2xl font-bold text-center text-slate-800">TOEIC Coach Pro</h1>
 
-        <section class="card p-6 border-l-4 border-indigo-600">
-            <h2 class="text-xs font-bold text-slate-400 uppercase mb-4">Portfolio & Roadmap</h2>
+        <section class="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-indigo-600">
+            <h2 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Portfolio & Roadmap</h2>
             <div class="grid grid-cols-2 gap-4 mb-4">
                 <div><label class="text-[10px]">現在のスコア</label><input type="number" id="curScore" onchange="saveScore()" class="w-full border rounded p-1 text-sm"></div>
                 <div><label class="text-[10px]">目標スコア</label><input type="number" id="tarScore" onchange="saveScore()" class="w-full border rounded p-1 text-sm"></div>
             </div>
-            <div class="space-y-1">
-                <div class="flex justify-between text-xs font-bold text-slate-600">
-                    <span id="gap-display">目標達成まで...</span>
-                    <span id="percent-display">0%</span>
-                </div>
-                <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
-                    <div id="progress-bar" class="bg-indigo-600 h-full w-0 transition-all duration-700"></div>
-                </div>
-                <p id="roadmap-advice" class="text-[11px] text-slate-500 mt-2 bg-slate-50 p-2 rounded italic">---</p>
-            </div>
+            <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden"><div id="progress-bar" class="bg-indigo-600 h-full w-0"></div></div>
+            <div id="roadmap-advice" class="mt-4 text-xs text-slate-600 italic bg-slate-50 p-3 rounded"></div>
         </section>
 
-        <section class="card p-6">
-            <h2 class="text-xs font-bold text-slate-400 uppercase mb-3">Add Custom Vocabulary</h2>
-            <div class="space-y-2">
-                <input type="text" id="new-en" placeholder="英単語・フレーズ" class="w-full border rounded-lg p-2 text-sm">
-                <input type="text" id="new-exp" placeholder="意味・解説" class="w-full border rounded-lg p-2 text-sm">
-                <button onclick="addManualVocab()" class="w-full bg-emerald-600 text-white py-2 rounded-lg font-bold text-sm">登録する</button>
-            </div>
+        <section class="bg-white p-6 rounded-2xl shadow-sm">
+            <input type="text" id="new-en" placeholder="英単語" class="w-full border p-2 rounded mb-2 text-sm">
+            <input type="text" id="new-exp" placeholder="意味・解説" class="w-full border p-2 rounded mb-2 text-sm">
+            <button onclick="addManualVocab()" class="w-full bg-emerald-600 text-white py-2 rounded-lg font-bold text-sm">単語帳に追加</button>
         </section>
 
         <div class="grid grid-cols-2 gap-4">
-            <button onclick="startQuiz('part5')" class="card p-6 text-center hover:bg-indigo-50">📝 問題演習</button>
-            <button onclick="startVocabQuiz()" class="card p-6 text-center hover:bg-yellow-50">⭐ 単語復習</button>
+            <button onclick="startQuiz('part5')" class="bg-white p-6 rounded-2xl shadow-sm text-center hover:bg-indigo-50">📝 問題演習</button>
+            <button onclick="startVocabQuiz()" class="bg-white p-6 rounded-2xl shadow-sm text-center hover:bg-yellow-50">⭐ 単語復習</button>
         </div>
 
-        <div id="quiz-area" class="hidden card p-6">
+        <section class="bg-white p-6 rounded-2xl shadow-sm">
+            <h2 class="text-xs font-bold text-slate-400 uppercase mb-4">Vocabulary List</h2>
+            <div id="vocab-list" class="max-h-48 overflow-y-auto text-sm space-y-2"></div>
+            <button onclick="exportCSV()" class="mt-4 w-full border py-2 rounded-lg text-xs">CSVダウンロード</button>
+        </section>
+
+        <div id="quiz-area" class="hidden bg-white p-6 rounded-2xl shadow-xl fixed inset-4 z-50 overflow-y-auto">
             <div id="question-text" class="font-bold mb-4"></div>
             <div id="options-box" class="grid gap-2"></div>
-            <div id="explanation-box" class="hidden mt-4 bg-slate-50 p-4 rounded-lg border">
-                <p id="explanation-text" class="text-sm"></p>
-                <button onclick="nextQuestion()" class="w-full mt-4 bg-slate-800 text-white py-2 rounded">次へ</button>
+            <div id="explanation-box" class="hidden mt-4 bg-slate-50 p-4 rounded-xl">
+                <p id="explanation-text" class="text-sm text-slate-700"></p>
+                <button onclick="location.reload()" class="w-full mt-4 bg-slate-800 text-white py-2 rounded">閉じる</button>
             </div>
         </div>
     </main>
 
     <script>
         const BANK = { part5: [{ id: 1, en: "The CEO ------- the meeting.", options: ["attend", "attends", "attended", "attending"], correct: 2, exp: "昨日なので過去形。" }] };
-        
+
         function saveScore() {
-            const cur = document.getElementById('curScore').value;
-            const tar = document.getElementById('tarScore').value;
-            localStorage.setItem('toeic_data', JSON.stringify({ cur, tar }));
+            const d = { cur: document.getElementById('curScore').value, tar: document.getElementById('tarScore').value };
+            localStorage.setItem('toeic_data', JSON.stringify(d));
             updateDashboard();
         }
 
@@ -69,29 +60,35 @@
             const d = JSON.parse(localStorage.getItem('toeic_data') || '{"cur":400,"tar":700}');
             document.getElementById('curScore').value = d.cur;
             document.getElementById('tarScore').value = d.tar;
-            const progress = Math.min(((d.cur - 200) / (d.tar - 200)) * 100, 100);
+            const progress = Math.min(((d.cur - 200) / (d.tar - 200) * 100), 100);
             document.getElementById('progress-bar').style.width = progress + "%";
-            document.getElementById('percent-display').innerText = Math.floor(progress) + "%";
-            document.getElementById('gap-display').innerText = `あと ${d.tar - d.cur} 点`;
-            document.getElementById('roadmap-advice').innerText = d.cur < 600 ? "基礎文法と重要単語の暗記が最優先です。" : "Part 7の速読力強化がスコアの鍵です。";
+            document.getElementById('roadmap-advice').innerHTML = `目標達成まで残り <strong>${d.tar - d.cur}点</strong>。本日はPart 5を10問解き、単語帳を一周しましょう！`;
+            renderVocabList();
         }
 
         function addManualVocab() {
-            const entry = { id: Date.now(), en: document.getElementById('new-en').value, options: ["(確認用)", "※自己登録", "※復習用", "---"], correct: 0, exp: document.getElementById('new-exp').value };
+            const entry = { id: Date.now(), en: document.getElementById('new-en').value, options: ["(自己登録)", "---", "---", "---"], correct: 0, exp: document.getElementById('new-exp').value };
             let list = JSON.parse(localStorage.getItem('myVocab') || '[]');
             list.push(entry);
             localStorage.setItem('myVocab', JSON.stringify(list));
-            alert("追加完了！");
+            document.getElementById('new-en').value = '';
+            document.getElementById('new-exp').value = '';
+            updateDashboard();
         }
 
-        // 起動時実行
-        window.onload = updateDashboard;
-        
-        // (他、startQuiz等の既存ロジックはそのまま維持)
-        function startQuiz(mode) { currentQuiz = BANK[mode]; document.getElementById('quiz-area').classList.remove('hidden'); showQuestion(); }
-        function startVocabQuiz() { currentQuiz = JSON.parse(localStorage.getItem('myVocab') || '[]'); document.getElementById('quiz-area').classList.remove('hidden'); showQuestion(); }
-        function showQuestion() { /* 既存の表示ロジック */ }
-        function nextQuestion() { location.reload(); }
-    </script>
-</body>
-</html>
+        function renderVocabList() {
+            const list = JSON.parse(localStorage.getItem('myVocab') || '[]');
+            const container = document.getElementById('vocab-list');
+            container.innerHTML = list.map((item, i) => `<div class="flex justify-between border-b py-1"><span>${item.en}: ${item.exp}</span><button onclick="deleteVocab(${i})" class="text-red-400">×</button></div>`).join('');
+        }
+
+        function deleteVocab(i) {
+            let list = JSON.parse(localStorage.getItem('myVocab') || '[]');
+            list.splice(i, 1);
+            localStorage.setItem('myVocab', JSON.stringify(list));
+            renderVocabList();
+        }
+
+        function exportCSV() {
+            const list = JSON.parse(localStorage.getItem('myVocab') || '[]');
+            let csv = "data:text/csv;charset=utf-8,英単語,意味\n" + list.map(i => `"${i.en}","${i.exp}"`).join("\
