@@ -49,8 +49,6 @@
 
     <script>
         const BANK = { part5: [{ id: 1, en: "The CEO ------- the meeting.", options: ["attend", "attends", "attended", "attending"], correct: 2, exp: "昨日なので過去形。" }] };
-
-        // 状態を管理する変数
         let currentExp = "";
 
         function saveScore() {
@@ -61,16 +59,28 @@
 
         function updateDashboard() {
             const d = JSON.parse(localStorage.getItem('toeic_data') || '{"cur":400,"tar":700}');
-            document.getElementById('curScore').value = d.cur;
-            document.getElementById('tarScore').value = d.tar;
-            const progress = Math.min(((d.cur - 200) / (d.tar - 200) * 100), 100);
-            document.getElementById('progress-bar').style.width = progress + "%";
-            document.getElementById('roadmap-advice').innerHTML = `目標達成まで残り <strong>${d.tar - d.cur}点</strong>。本日はPart 5を10問解き、単語帳を一周しましょう！`;
+            const cur = parseInt(d.cur);
+            const tar = parseInt(d.tar);
+            const gap = tar - cur;
+
+            document.getElementById('curScore').value = cur;
+            document.getElementById('tarScore').value = tar;
+            
+            // ロードマップロジック
+            let levelComment = "";
+            if (cur < 470) levelComment = "【基礎力定着段階】まずは470点を目指しましょう。";
+            else if (cur < 600) levelComment = "【一般企業推奨レベル】履歴書に書ける最低ラインです。";
+            else if (cur < 730) levelComment = "【海外ビジネス推奨レベル】英語ができると見なされる指標です。";
+            else if (cur < 860) levelComment = "【グローバル人材レベル】海外赴任や外資系への挑戦権が得られます。";
+            else levelComment = "【超上級レベル】英語力は証明済み。実務のアウトプットを意識しましょう。";
+
+            document.getElementById('progress-bar').style.width = Math.min(((cur - 200) / (tar - 200) * 100), 100) + "%";
+            document.getElementById('roadmap-advice').innerHTML = `<p class="font-bold text-indigo-700">${levelComment}</p><p>残り<strong>${gap}点</strong>達成へ。毎日コツコツ学習しましょう！</p>`;
             renderVocabList();
         }
 
         function addManualVocab() {
-            const entry = { id: Date.now(), en: document.getElementById('new-en').value, options: ["(自己登録)", "---", "---", "---"], correct: 0, exp: document.getElementById('new-exp').value };
+            const entry = { id: Date.now(), en: document.getElementById('new-en').value, options: ["(自己登録)"], correct: 0, exp: document.getElementById('new-exp').value };
             let list = JSON.parse(localStorage.getItem('myVocab') || '[]');
             list.push(entry);
             localStorage.setItem('myVocab', JSON.stringify(list));
@@ -106,7 +116,7 @@
             currentExp = q.exp;
             document.getElementById('quiz-area').classList.remove('hidden');
             document.getElementById('question-text').innerText = q.en;
-            document.getElementById('options-box').innerHTML = q.options.map((o, i) => `<button onclick="showExp()" class="p-3 border rounded">${o}</button>`).join('');
+            document.getElementById('options-box').innerHTML = q.options.map(o => `<button onclick="showExp()" class="p-3 border rounded">${o}</button>`).join('');
         }
 
         function startVocabQuiz() {
