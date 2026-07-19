@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <!-- index.htmlの <head> のすぐ下に追加する記述 -->
-<link rel="manifest" href="manifest.json">
-<script>
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js');
-    }
-</script>
+    <!-- PWAマニフェストの設定 -->
+    <link rel="manifest" href="manifest.json">
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+    </script>
     <meta charset="UTF-8">
+    <!-- 📱 【超重要】スマホで等倍表示（レスポンシブ）にするための設定 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TOEIC Coach Pro - Ultimate Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -25,6 +27,7 @@
 </head>
 <body class="bg-slate-50 p-4 md:p-8 min-h-screen text-slate-800 relative">
 
+    <!-- サイドメニュー -->
     <div id="side-menu" class="z-menu fixed left-0 top-0 h-full w-64 bg-white shadow-2xl p-6 -translate-x-full invisible transition-all duration-300 ease-in-out">
         <div class="flex justify-between items-center mb-6">
             <h2 class="font-bold text-lg text-slate-800">Menu</h2>
@@ -39,10 +42,11 @@
         </nav>
     </div>
 
+    <!-- メインコンテンツ -->
     <main class="max-w-xl mx-auto space-y-6 relative z-10">
         <div class="flex items-center justify-between">
-            <button onclick="toggleMenu()" class="p-2 bg-white rounded-lg shadow-sm border border-slate-200 text-slate-700 font-medium hover:bg-slate-50 transition-colors">☰ Menu</button>
-            <h1 class="text-2xl font-bold text-center text-slate-800">TOEIC Coach Pro</h1>
+            <button onclick="toggleMenu()" class="p-2 bg-white rounded-lg shadow-sm border border-slate-200 text-slate-700 font-medium hover:bg-slate-50 transition-colors text-xs md:text-sm">☰ Menu</button>
+            <h1 class="text-xl md:text-2xl font-bold text-center text-slate-800">TOEIC Coach Pro</h1>
             <button onclick="openGuideBtn()" class="p-2 bg-emerald-50 text-emerald-600 rounded-lg shadow-sm border border-emerald-200 font-bold hover:bg-emerald-100 transition-colors text-xs flex items-center gap-1">
                 💡 使い方
             </button>
@@ -96,57 +100,59 @@
         </section>
 
         <div class="grid grid-cols-2 gap-4">
-            <button onclick="startListeningQuiz()" class="col-span-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white py-4 rounded-2xl font-bold shadow-md transition-all text-base flex items-center justify-center gap-2">
+            <button onclick="startListeningQuiz()" class="col-span-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white py-4 rounded-2xl font-bold shadow-md transition-all text-sm md:text-base flex items-center justify-center gap-2">
                 🎧 リスニング演習 (Part 1〜4 自動生成)
             </button>
-            <button onclick="openChatModal()" class="col-span-2 bg-slate-800 hover:bg-slate-900 text-white py-4 rounded-2xl font-bold shadow-md transition-colors text-base flex items-center justify-center gap-2">
+            <button onclick="openChatModal()" class="col-span-2 bg-slate-800 hover:bg-slate-900 text-white py-4 rounded-2xl font-bold shadow-md transition-colors text-sm md:text-base flex items-center justify-center gap-2">
                 🗣️ AIリアルタイム英会話シミュレーター
             </button>
-            <button onclick="startQuiz('part5')" class="bg-indigo-600 hover:bg-indigo-700 text-white py-4 rounded-2xl font-bold shadow-md transition-colors text-sm">Part 5 演習 (文法)</button>
-            <button onclick="startQuiz('part6')" class="bg-indigo-700 hover:bg-indigo-800 text-white py-4 rounded-2xl font-bold shadow-md transition-colors text-sm">Part 6 演習 (長文穴埋め)</button>
-            <button onclick="startQuiz('part7')" class="bg-violet-600 hover:bg-violet-700 text-white py-4 rounded-2xl font-bold shadow-md transition-colors text-sm">Part 7 演習 (長文読解)</button>
-            <button onclick="startQuiz('vocab')" class="bg-emerald-600 hover:bg-emerald-700 text-white py-4 rounded-2xl font-bold shadow-md transition-colors text-sm">単語復習クイズ</button>
+            <button onclick="startQuiz('part5')" class="bg-indigo-600 hover:bg-indigo-700 text-white py-4 rounded-2xl font-bold shadow-md transition-colors text-xs md:text-sm">Part 5 演習 (文法)</button>
+            <button onclick="startQuiz('part6')" class="bg-indigo-700 hover:bg-indigo-800 text-white py-4 rounded-2xl font-bold shadow-md transition-colors text-xs md:text-sm">Part 6 演習 (長文穴埋め)</button>
+            <button onclick="startQuiz('part7')" class="bg-violet-600 hover:bg-violet-700 text-white py-4 rounded-2xl font-bold shadow-md transition-colors text-xs md:text-sm">Part 7 演習 (長文読解)</button>
+            <button onclick="startQuiz('vocab')" class="bg-emerald-600 hover:bg-emerald-700 text-white py-4 rounded-2xl font-bold shadow-md transition-colors text-xs md:text-sm">単語復習クイズ</button>
         </div>
     </main>
 
-    <div id="listening-modal" class="z-modal bg-white p-6 rounded-2xl shadow-2xl fixed inset-4 border border-slate-100 hidden flex-col justify-between overflow-y-auto">
+    <!-- リスニング無限特訓モーダル -->
+    <div id="listening-modal" class="z-modal bg-white p-4 md:p-6 rounded-2xl shadow-2xl fixed inset-2 md:inset-4 border border-slate-100 hidden flex-col justify-between overflow-y-auto">
         <div class="space-y-4">
             <div class="flex justify-between items-center border-b pb-3">
-                <h2 class="font-bold text-lg text-slate-800 flex items-center gap-2">🎧 リスニング無限特訓 (<span id="list-part-title">Part1</span>)</h2>
+                <h2 class="font-bold text-base md:text-lg text-slate-800 flex items-center gap-2">🎧 リスニング無限特訓 (<span id="list-part-title">Part1</span>)</h2>
                 <button onclick="closeListeningQuiz()" class="text-slate-400 hover:text-slate-600 text-xl font-bold">✕</button>
             </div>
 
-            <div class="grid grid-cols-4 gap-1 bg-slate-100 p-1 rounded-xl text-xs font-bold">
+            <div class="grid grid-cols-4 gap-1 bg-slate-100 p-1 rounded-xl text-[10px] md:text-xs font-bold">
                 <button onclick="selectListeningPart(1)" id="btn-lp1" class="py-2 rounded-lg bg-white shadow-sm text-slate-800">Part 1</button>
                 <button onclick="selectListeningPart(2)" id="btn-lp2" class="py-2 rounded-lg text-slate-500">Part 2</button>
                 <button onclick="selectListeningPart(3)" id="btn-lp3" class="py-2 rounded-lg text-slate-500">Part 3</button>
                 <button onclick="selectListeningPart(4)" id="btn-lp4" class="py-2 rounded-lg text-slate-500">Part 4</button>
             </div>
 
-            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+            <div class="bg-slate-50 p-3 md:p-4 rounded-xl border border-slate-200 space-y-3">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded">問題ステータス</span>
-                    <button onclick="playListeningAudio()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-4 py-2 rounded-lg shadow flex items-center gap-1">
-                        🔊 音声を再生する
+                    <span class="text-[10px] md:text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded">問題ステータス</span>
+                    <button onclick="playListeningAudio()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-3 py-1.5 rounded-lg shadow flex items-center gap-1">
+                        🔊 音声を再生
                     </button>
                 </div>
                 
                 <div id="toeic-canvas-wrapper" class="hidden justify-center items-center py-2">
-                    <canvas id="toeic-part1-image" width="480" height="320" class="border border-slate-300 rounded-lg max-w-full shadow-sm"></canvas>
+                    <canvas id="toeic-part1-image" width="480" height="320" class="border border-slate-300 rounded-lg max-w-full shadow-sm bg-white"></canvas>
                 </div>
 
-                <div id="list-context-box" class="text-sm font-medium text-slate-700 bg-white p-3 rounded-lg border border-slate-200"></div>
+                <div id="list-context-box" class="text-xs md:text-sm font-medium text-slate-700 bg-white p-3 rounded-lg border border-slate-200"></div>
             </div>
 
-            <div id="list-answers-container" class="space-y-4"></div>
+            <div id="list-answers-container" class="space-y-3"></div>
         </div>
 
-        <div class="border-t pt-4 mt-6 flex gap-2">
-            <button onclick="checkListeningAnswers()" id="btn-list-submit" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl text-sm transition-colors shadow">答え合わせをする</button>
-            <button onclick="generateListeningQuestion()" class="flex-1 bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 rounded-xl text-sm transition-colors shadow">🔄 別の問題を新しく生成</button>
+        <div class="border-t pt-4 mt-4 flex gap-2 flex-shrink-0">
+            <button onclick="checkListeningAnswers()" id="btn-list-submit" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl text-xs md:text-sm transition-colors shadow">答え合わせ</button>
+            <button onclick="generateListeningQuestion()" class="flex-1 bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 rounded-xl text-xs md:text-sm transition-colors shadow">🔄 次の問題</button>
         </div>
     </div>
 
+    <!-- AI英会話モーダル -->
     <div id="chat-modal" class="z-modal bg-slate-50 p-4 rounded-2xl shadow-2xl fixed inset-2 md:inset-10 border border-slate-200 hidden flex-col">
         <div class="flex justify-between items-center border-b border-slate-200 pb-3 mb-3 flex-shrink-0">
             <div class="flex items-center gap-2">
@@ -156,185 +162,190 @@
             <button onclick="closeChatModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-200 transition-colors">✕</button>
         </div>
         
-        <div class="grid grid-cols-3 gap-1 bg-slate-200 p-1 rounded-xl mb-3 text-xs font-bold flex-shrink-0">
+        <div class="grid grid-cols-3 gap-1 bg-slate-200 p-1 rounded-xl mb-3 text-[10px] md:text-xs font-bold flex-shrink-0">
             <button onclick="selectChatScene('meeting')" id="btn-scene-meeting" class="py-2 rounded-lg bg-indigo-600 text-white transition-all">💼 会議で提案</button>
             <button onclick="selectChatScene('hotel')" id="btn-scene-hotel" class="py-2 rounded-lg text-slate-600 hover:bg-white/50 transition-all">🏨 ホテル受付</button>
             <button onclick="selectChatScene('cafe')" id="btn-scene-cafe" class="py-2 rounded-lg text-slate-600 hover:bg-white/50 transition-all">☕ カフェ注文</button>
         </div>
 
-        <div id="chat-box" class="flex-1 overflow-y-auto bg-white border border-slate-200 rounded-2xl p-4 space-y-3 min-h-0 mb-3 text-sm"></div>
+        <div id="chat-box" class="flex-1 overflow-y-auto bg-white border border-slate-200 rounded-2xl p-4 space-y-3 min-h-0 mb-3 text-xs md:text-sm"></div>
 
-        <div class="bg-amber-50 p-2.5 rounded-xl border border-amber-200 text-xs mb-3 flex-shrink-0">
+        <div class="bg-amber-50 p-2.5 rounded-xl border border-amber-200 text-[11px] md:text-xs mb-3 flex-shrink-0">
             <span class="font-bold text-amber-800">💡 困ったときのお助けフレーズヒント:</span>
             <p id="chat-hints" class="text-slate-600 mt-0.5 font-medium"></p>
         </div>
 
         <div class="flex gap-2 items-center flex-shrink-0">
-            <button onclick="toggleSpeechRecognition()" id="mic-btn" class="w-12 h-12 rounded-full bg-slate-100 hover:bg-red-50 border border-slate-200 text-xl flex items-center justify-center transition-all flex-shrink-0 shadow-sm" title="音声入力を開始/停止">🎙️</button>
-            <input type="text" id="chat-input" onkeypress="if(event.key==='Enter') sendChatMessage()" placeholder="ここに英語を入力するか、マイクで話してください..." class="flex-1 p-3 border border-slate-200 rounded-xl text-sm focus:outline-indigo-500 bg-white shadow-sm">
-            <button onclick="sendChatMessage()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-3 rounded-xl font-bold text-sm transition-colors shadow-sm flex-shrink-0">送信</button>
+            <button onclick="toggleSpeechRecognition()" id="mic-btn" class="w-10 h-12 rounded-full bg-slate-100 hover:bg-red-50 border border-slate-200 text-xl flex items-center justify-center transition-all flex-shrink-0 shadow-sm" title="音声入力を開始/停止">🎙️</button>
+            <input type="text" id="chat-input" onkeypress="if(event.key==='Enter') sendChatMessage()" placeholder="英語を入力するかマイクで..." class="flex-1 p-3 border border-slate-200 rounded-xl text-xs md:text-sm focus:outline-indigo-500 bg-white shadow-sm">
+            <button onclick="sendChatMessage()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-3 rounded-xl font-bold text-xs md:text-sm transition-colors shadow-sm flex-shrink-0">送信</button>
         </div>
     </div>
 
-    <div id="textbook-modal" class="z-modal bg-slate-50 p-5 rounded-2xl shadow-2xl fixed inset-4 md:inset-x-20 md:inset-y-10 border border-slate-200 hidden flex-col">
+    <!-- 参考書モーダル -->
+    <div id="textbook-modal" class="z-modal bg-slate-50 p-4 md:p-5 rounded-2xl shadow-2xl fixed inset-2 md:inset-4 border border-slate-200 hidden flex-col">
         <div class="flex justify-between items-center border-b border-slate-200 pb-3 mb-4 flex-shrink-0">
             <div class="flex items-center gap-2">
                 <span class="text-xl">📖</span>
-                <h2 class="font-bold text-lg text-slate-800">TOEIC マスター参考書</h2>
+                <h2 class="font-bold text-base md:text-lg text-slate-800">TOEIC マスター参考書</h2>
                 <span class="ml-2 bg-amber-100 text-amber-800 text-[10px] font-bold px-2 py-1 rounded-full">Part 1〜7 完全網羅</span>
             </div>
             <button onclick="closeTextbook()" class="text-slate-400 hover:text-slate-600 text-2xl font-bold w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-200 transition-colors">✕</button>
         </div>
-        <div class="flex-1 overflow-y-auto space-y-4 pr-2 pb-8">
+        <div class="flex-1 overflow-y-auto space-y-4 pr-1 pb-8">
             <div class="border border-slate-200 rounded-xl bg-white overflow-hidden shadow-sm">
                 <button onclick="toggleTextbookSection('tb-sec-1')" class="w-full text-left p-4 font-bold text-slate-700 hover:bg-slate-100 flex justify-between items-center transition-colors">
-                    <span class="text-base">Part 1：写真描写問題の鉄則</span><span id="tb-icon-1" class="text-slate-400 text-xs">▼</span>
+                    <span class="text-xs md:text-base">Part 1：写真描写問題の鉄則</span><span id="tb-icon-1" class="text-slate-400 text-xs">▼</span>
                 </button>
-                <div id="tb-sec-1" class="hidden p-4 text-sm text-slate-700 border-t border-slate-100 bg-slate-50/50">
+                <div id="tb-sec-1" class="hidden p-4 text-xs md:text-sm text-slate-700 border-t border-slate-100 bg-slate-50/50">
                     <p class="mb-2">主語・動詞・目的語（位置関係）を正確に聞き取ることが重要です。特に「状態（例: wearing）」と「動作（例: putting on）」の引っ掛けに注意しましょう。</p>
                 </div>
             </div>
             <div class="border border-slate-200 rounded-xl bg-white overflow-hidden shadow-sm">
                 <button onclick="toggleTextbookSection('tb-sec-2')" class="w-full text-left p-4 font-bold text-slate-700 hover:bg-slate-100 flex justify-between items-center transition-colors">
-                    <span class="text-base">Part 2：応答問題の鉄則</span><span id="tb-icon-2" class="text-slate-400 text-xs">▼</span>
+                    <span class="text-xs md:text-base">Part 2：応答問題の鉄則</span><span id="tb-icon-2" class="text-slate-400 text-xs">▼</span>
                 </button>
-                <div id="tb-sec-2" class="hidden p-4 text-sm text-slate-700 border-t border-slate-100 bg-slate-50/50">
+                <div id="tb-sec-2" class="hidden p-4 text-xs md:text-sm text-slate-700 border-t border-slate-100 bg-slate-50/50">
                     <p class="mb-2">質問の文頭（Who, Where, When, Why, Howなど）の疑問詞を絶対に聞き逃さないことです。また、同じ発音の単語を使った引っ掛け選択肢に騙されないようにしましょう。</p>
                 </div>
             </div>
             <div class="border border-slate-200 rounded-xl bg-white overflow-hidden shadow-sm">
                 <button onclick="toggleTextbookSection('tb-sec-3')" class="w-full text-left p-4 font-bold text-slate-700 hover:bg-slate-100 flex justify-between items-center transition-colors">
-                    <span class="text-base">Part 3：会話問題の鉄則</span><span id="tb-icon-3" class="text-slate-400 text-xs">▼</span>
+                    <span class="text-xs md:text-base">Part 3：会話問題の鉄則</span><span id="tb-icon-3" class="text-slate-400 text-xs">▼</span>
                 </button>
-                <div id="tb-sec-3" class="hidden p-4 text-sm text-slate-700 border-t border-slate-100 bg-slate-50/50">
+                <div id="tb-sec-3" class="hidden p-4 text-xs md:text-sm text-slate-700 border-t border-slate-100 bg-slate-50/50">
                     <p class="mb-2"><strong>「設問の先読み」</strong>がスコアを左右します。ナレーションが流れる前に、何を聴き取るべきかのターゲットを頭に入れて待ち構えましょう。</p>
                 </div>
             </div>
             <div class="border border-slate-200 rounded-xl bg-white overflow-hidden shadow-sm">
                 <button onclick="toggleTextbookSection('tb-sec-4')" class="w-full text-left p-4 font-bold text-slate-700 hover:bg-slate-100 flex justify-between items-center transition-colors">
-                    <span class="text-base">Part 4：説明文問題の鉄則</span><span id="tb-icon-4" class="text-slate-400 text-xs">▼</span>
+                    <span class="text-xs md:text-base">Part 4：説明文問題の鉄則</span><span id="tb-icon-4" class="text-slate-400 text-xs">▼</span>
                 </button>
-                <div id="tb-sec-4" class="hidden p-4 text-sm text-slate-700 border-t border-slate-100 bg-slate-50/50">
+                <div id="tb-sec-4" class="hidden p-4 text-xs md:text-sm text-slate-700 border-t border-slate-100 bg-slate-50/50">
                     <p class="mb-2">アナウンスや広告、留守番電話などの「シチュエーション」を冒頭の数秒で素早く把握し、全体のストーリー展開を予測しながら聴き進めます。</p>
                 </div>
             </div>
             <div class="border border-slate-200 rounded-xl bg-white overflow-hidden shadow-sm">
                 <button onclick="toggleTextbookSection('tb-sec-5')" class="w-full text-left p-4 font-bold text-slate-700 hover:bg-slate-100 flex justify-between items-center transition-colors">
-                    <span class="text-base">Part 5：短文穴埋め問題の鉄則</span><span id="tb-icon-5" class="text-slate-400 text-xs">▼</span>
+                    <span class="text-xs md:text-base">Part 5：短文穴埋め問題の鉄則</span><span id="tb-icon-5" class="text-slate-400 text-xs">▼</span>
                 </button>
-                <div id="tb-sec-5" class="hidden p-4 text-sm text-slate-700 border-t border-slate-100 bg-slate-50/50">
+                <div id="tb-sec-5" class="hidden p-4 text-xs md:text-sm text-slate-700 border-t border-slate-100 bg-slate-50/50">
                     <p class="mb-2">品詞問題、語彙問題、時制・前置詞問題のパターンを瞬時に見極めます。空欄の前後だけを見て3秒で解ける問題数を増やすのがスピードアップの鍵です。</p>
                 </div>
             </div>
             <div class="border border-slate-200 rounded-xl bg-white overflow-hidden shadow-sm">
                 <button onclick="toggleTextbookSection('tb-sec-6')" class="w-full text-left p-4 font-bold text-slate-700 hover:bg-slate-100 flex justify-between items-center transition-colors">
-                    <span class="text-base">Part 6：長文穴埋め問題の鉄則</span><span id="tb-icon-6" class="text-slate-400 text-xs">▼</span>
+                    <span class="text-xs md:text-base">Part 6：長文穴埋め問題の鉄則</span><span id="tb-icon-6" class="text-slate-400 text-xs">▼</span>
                 </button>
-                <div id="tb-sec-6" class="hidden p-4 text-sm text-slate-700 border-t border-slate-100 bg-slate-50/50">
+                <div id="tb-sec-6" class="hidden p-4 text-xs md:text-sm text-slate-700 border-t border-slate-100 bg-slate-50/50">
                     <p class="mb-2">文法・語彙の穴埋めに加え、「文挿入問題」が出題されます。前後の文章のつながり（指示語や接続詞など）を論理的に追う能力が必要です。</p>
                 </div>
             </div>
             <div class="border border-slate-200 rounded-xl bg-white overflow-hidden shadow-sm">
                 <button onclick="toggleTextbookSection('tb-sec-7')" class="w-full text-left p-4 font-bold text-slate-700 hover:bg-slate-100 flex justify-between items-center transition-colors">
-                    <span class="text-base">Part 7：読解問題の鉄則</span><span id="tb-icon-7" class="text-slate-400 text-xs">▼</span>
+                    <span class="text-xs md:text-base">Part 7：読解問題の鉄則</span><span id="tb-icon-7" class="text-slate-400 text-xs">▼</span>
                 </button>
-                <div id="tb-sec-7" class="hidden p-4 text-sm text-slate-700 border-t border-slate-100 bg-slate-50/50">
+                <div id="tb-sec-7" class="hidden p-4 text-xs md:text-sm text-slate-700 border-t border-slate-100 bg-slate-50/50">
                     <p class="mb-2">Eメール、お知らせ、広告などから必要な情報を探します。設問のキーワードを頭に置きながら、本文中の言い換え（パラフレーズ）を正確に見つける練習をしましょう。</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="quiz-area" class="z-modal bg-white p-6 rounded-2xl shadow-2xl fixed inset-4 border border-slate-100 hidden flex-col justify-between overflow-y-auto">
+    <!-- リーディングクイズ共通モーダル -->
+    <div id="quiz-area" class="z-modal bg-white p-4 md:p-6 rounded-2xl shadow-2xl fixed inset-2 md:inset-4 border border-slate-100 hidden flex-col justify-between overflow-y-auto">
         <div>
             <div class="w-full bg-slate-100 h-2 rounded-full mb-4 overflow-hidden">
                 <div id="timer-bar" class="bg-red-500 h-full w-full transition-all duration-1000 ease-linear"></div>
             </div>
-            <div id="quiz-progress-text" class="text-xs font-bold text-indigo-600 mb-2"></div>
-            <div id="q-text" class="font-bold text-slate-800 text-sm md:text-base mb-6 whitespace-pre-wrap bg-slate-50 p-4 rounded-xl border border-slate-200 leading-relaxed max-h-[40vh] overflow-y-auto"></div>
-            <div id="options-box" class="grid gap-3"></div>
+            <div id="quiz-progress-text" class="text-[10px] md:text-xs font-bold text-indigo-600 mb-2"></div>
+            <div id="q-text" class="font-bold text-slate-800 text-xs md:text-base mb-4 whitespace-pre-wrap bg-slate-50 p-3 md:p-4 rounded-xl border border-slate-200 leading-relaxed max-h-[40vh] overflow-y-auto"></div>
+            <div id="options-box" class="grid gap-2.5"></div>
         </div>
-        <button onclick="stopQuiz()" class="w-full mt-6 bg-slate-100 hover:bg-slate-200 text-slate-600 py-3 rounded-xl font-bold transition-colors text-sm border border-slate-200 flex-shrink-0">演習を中断して戻る</button>
+        <button onclick="stopQuiz()" class="w-full mt-4 bg-slate-100 hover:bg-slate-200 text-slate-600 py-3 rounded-xl font-bold transition-colors text-xs border border-slate-200 flex-shrink-0">演習を中断して戻る</button>
     </div>
 
-    <div id="vocab-modal" class="z-modal bg-white p-5 rounded-2xl shadow-2xl fixed inset-4 border border-slate-100 hidden flex-col">
-        <div class="flex justify-between items-center border-b pb-3 mb-3 flex-shrink-0">
-            <h2 class="font-bold text-lg text-slate-800">📚 登録単語一覧</h2>
-            <span class="bg-indigo-100 text-indigo-700 text-xs px-2.5 py-1 rounded-full font-bold">総登録: <span id="vocab-count">0</span>語</span>
+    <!-- 単語一覧モーダル -->
+    <div id="vocab-modal" class="z-modal bg-white p-4 md:p-5 rounded-2xl shadow-2xl fixed inset-2 md:inset-4 border border-slate-100 hidden flex-col">
+        <div class="flex justify-between items-center border-b pb-2 mb-3 flex-shrink-0">
+            <h2 class="font-bold text-base md:text-lg text-slate-800">📚 登録単語一覧</h2>
+            <span class="bg-indigo-100 text-indigo-700 text-[10px] md:text-xs px-2.5 py-1 rounded-full font-bold">総登録: <span id="vocab-count">0</span>語</span>
         </div>
         <div class="mb-3 flex-shrink-0 relative">
-            <span class="absolute left-3 top-2 text-slate-400 text-sm">🔍</span>
-            <input id="vocab-search" oninput="refreshModalList()" placeholder="単語や意味で検索..." class="w-full pl-8 pr-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-indigo-500 bg-slate-50 focus:bg-white transition-colors">
+            <span class="absolute left-3 top-2.5 text-slate-400 text-xs">🔍</span>
+            <input id="vocab-search" oninput="refreshModalList()" placeholder="単語や意味で検索..." class="w-full pl-8 pr-3 py-2 border border-slate-200 rounded-lg text-xs focus:outline-indigo-500 bg-slate-50 focus:bg-white transition-colors">
         </div>
-        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-3 mb-3 flex-shrink-0">
+        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-3 mb-3 flex-shrink-0 text-xs">
             <div>
-                <input id="modal-en" placeholder="英単語" class="w-full p-2 border border-slate-200 rounded-lg text-sm focus:outline-indigo-500 mb-2">
+                <input id="modal-en" placeholder="英単語" class="w-full p-2 border border-slate-200 rounded-lg text-xs focus:outline-indigo-500 mb-2 bg-white">
                 <div class="grid grid-cols-3 gap-1">
-                    <input id="modal-exp1" placeholder="意味1" class="p-2 border border-slate-200 rounded-lg text-xs bg-white">
-                    <input id="modal-exp2" placeholder="意味2" class="p-2 border border-slate-200 rounded-lg text-xs bg-white">
-                    <input id="modal-exp3" placeholder="意味3" class="p-2 border border-slate-200 rounded-lg text-xs bg-white">
+                    <input id="modal-exp1" placeholder="意味1" class="p-2 border border-slate-200 rounded-lg text-[10px] bg-white">
+                    <input id="modal-exp2" placeholder="意味2" class="p-2 border border-slate-200 rounded-lg text-[10px] bg-white">
+                    <input id="modal-exp3" placeholder="意味3" class="p-2 border border-slate-200 rounded-lg text-[10px] bg-white">
                 </div>
                 <button onclick="addVocab('modal-en', 'modal-exp1', 'modal-exp2', 'modal-exp3')" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg font-bold text-xs mt-2">追加</button>
             </div>
             <div class="border-t pt-2 flex gap-2 items-center">
-                <input type="file" id="csv-file" accept=".csv" class="text-xs w-full">
-                <button onclick="importCSV()" class="bg-emerald-600 text-white px-3 py-1.5 rounded-lg font-bold text-xs whitespace-nowrap">CSVインポート</button>
+                <input type="file" id="csv-file" accept=".csv" class="text-[10px] w-full">
+                <button onclick="importCSV()" class="bg-emerald-600 text-white px-2.5 py-1.5 rounded-lg font-bold text-[10px] whitespace-nowrap">CSV取込</button>
             </div>
         </div>
         <div id="vocab-container" class="space-y-2 flex-1 overflow-y-auto mb-3"></div>
-        <div class="grid grid-cols-2 gap-3 pt-3 border-t flex-shrink-0">
-            <button onclick="downloadCSV()" class="bg-indigo-50 text-indigo-700 py-3 rounded-xl font-bold text-sm">CSVエクスポート</button>
-            <button onclick="closeVocabList()" class="bg-slate-800 text-white py-3 rounded-xl font-bold text-sm">閉じる</button>
+        <div class="grid grid-cols-2 gap-3 pt-2 border-t flex-shrink-0">
+            <button onclick="downloadCSV()" class="bg-indigo-50 text-indigo-700 py-2.5 rounded-xl font-bold text-xs">CSV出力</button>
+            <button onclick="closeVocabList()" class="bg-slate-800 text-white py-2.5 rounded-xl font-bold text-xs">閉じる</button>
         </div>
     </div>
 
-    <div id="dashboard-modal" class="z-modal bg-slate-900 p-5 rounded-2xl shadow-2xl fixed inset-4 border border-slate-800 hidden flex-col text-white overflow-hidden">
+    <!-- 学習記録モーダル -->
+    <div id="dashboard-modal" class="z-modal bg-slate-900 p-4 md:p-5 rounded-2xl shadow-2xl fixed inset-2 md:inset-4 border border-slate-800 hidden flex-col text-white overflow-hidden">
         <div class="flex justify-between items-center mb-4 flex-shrink-0">
-            <h2 class="font-bold text-lg tracking-wide">📊 学習記録</h2>
+            <h2 class="font-bold text-base tracking-wide">📊 学習記録</h2>
             <button onclick="closeDashboard()" class="text-slate-400 hover:text-white text-xl font-bold">✕</button>
         </div>
-        <div class="flex bg-slate-800 p-1 rounded-xl mb-4 text-xs font-bold flex-shrink-0">
+        <div class="flex bg-slate-800 p-1 rounded-xl mb-4 text-[10px] md:text-xs font-bold flex-shrink-0">
             <button onclick="switchDashTab('tab-record')" id="btn-tab-record" class="flex-1 py-2 rounded-lg bg-indigo-600 text-white">⏱️ 時間記録</button>
             <button onclick="switchDashTab('tab-charts')" id="btn-tab-charts" class="flex-1 py-2 rounded-lg text-slate-400">📈 グラフ</button>
             <button onclick="switchDashTab('tab-weak')" id="btn-tab-weak" class="flex-1 py-2 rounded-lg text-slate-400">❌ 苦手記録</button>
             <button onclick="switchDashTab('tab-config')" id="btn-tab-config" class="flex-1 py-2 rounded-lg text-slate-400">🔔 通知設定</button>
         </div>
-        <div class="flex-1 overflow-y-auto min-h-0 space-y-4 text-sm">
+        <div class="flex-1 overflow-y-auto min-h-0 space-y-4 text-xs md:text-sm">
             <div id="tab-record" class="space-y-3">
                 <input type="date" id="reg-date" onchange="loadDateRecord()" class="w-full p-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-xs">
                 <div class="grid grid-cols-2 gap-2">
                     <select id="reg-hours" class="p-2.5 bg-slate-950 border border-slate-700 rounded-xl text-xs text-white"><script>for(let i=0;i<=23;i++) document.write(`<option value="${i}">${i} 時間</option>`);</script></select>
                     <select id="reg-mins" class="p-2.5 bg-slate-950 border border-slate-700 rounded-xl text-xs text-white"><script>for(let i=0;i<60;i+=5) document.write(`<option value="${i}">${i} 分</option>`);</script></select>
                 </div>
-                <div id="current-status-tip" class="text-xs p-2 rounded bg-slate-950"></div>
+                <div id="current-status-tip" class="text-[11px] p-2 rounded bg-slate-950"></div>
                 <button onclick="saveTimeRecord()" class="w-full bg-indigo-600 py-3 rounded-xl font-bold text-xs">保存する</button>
             </div>
             <div id="tab-charts" class="space-y-4 hidden">
-                <div class="flex justify-center gap-2 text-xs font-bold">
+                <div class="flex justify-center gap-2 text-[10px] font-bold">
                     <button onclick="renderTimeCharts('week')" id="btn-chart-week" class="px-4 py-1.5 rounded-full bg-indigo-600 text-white">直近7日間</button>
                     <button onclick="renderTimeCharts('month')" id="btn-chart-month" class="px-4 py-1.5 rounded-full bg-slate-800 text-slate-400">月別</button>
                 </div>
-                <div class="bg-slate-800/40 p-4 rounded-xl border border-slate-700/40">
-                    <div id="chart-title" class="text-xs text-center mb-2"></div>
-                    <div class="h-32 flex items-end gap-2 border-b border-slate-700 pb-1" id="dash-chart-bars"></div>
+                <div class="bg-slate-800/40 p-3 rounded-xl border border-slate-700/40">
+                    <div id="chart-title" class="text-[11px] text-center mb-2"></div>
+                    <div class="h-32 flex items-end gap-1.5 border-b border-slate-700 pb-1" id="dash-chart-bars"></div>
                 </div>
                 <div class="text-center text-xs">🔥 今年の総学習時間: <span id="year-total-hours" class="font-bold text-emerald-400">0</span> 時間</div>
             </div>
             <div id="tab-weak" class="hidden space-y-2"><div id="weak-vocab-list"></div></div>
             <div id="tab-config" class="hidden space-y-3">
-                <div class="flex justify-between p-2 bg-slate-950 rounded-xl"><span class="text-xs font-bold">通知有効</span><input type="checkbox" id="notify-toggle" onchange="saveNotifyConfig()"></div>
+                <div class="flex justify-between p-2.5 bg-slate-950 rounded-xl items-center"><span class="text-xs font-bold">通知有効</span><input type="checkbox" id="notify-toggle" onchange="saveNotifyConfig()" class="w-4 h-4"></div>
                 <input type="time" id="notify-time" onchange="saveNotifyConfig()" class="w-full p-2.5 bg-slate-950 border border-slate-700 rounded-xl text-xs text-white">
                 <button onclick="testNotification()" class="w-full bg-slate-800 py-2 rounded-xl text-xs border border-slate-700">通知テスト</button>
             </div>
         </div>
     </div>
 
+    <!-- 使い方ガイド -->
     <div id="guide-modal" class="z-modal bg-slate-900/60 backdrop-blur-sm fixed inset-0 hidden items-center justify-center p-4">
-        <div class="bg-white w-full max-w-md rounded-2xl p-6 relative flex flex-col max-h-[85vh]">
+        <div class="bg-white w-full max-w-md rounded-2xl p-5 md:p-6 relative flex flex-col max-h-[85vh]">
             <button onclick="closeGuide()" class="absolute right-4 top-4 text-slate-400 text-xl font-bold">✕</button>
-            <div class="border-b pb-2 mb-4 font-bold text-slate-800">💡 アプリの使い方</div>
+            <div class="border-b pb-2 mb-4 font-bold text-slate-800 text-sm md:text-base">💡 アプリの使い方</div>
             <div class="overflow-y-auto space-y-3 text-xs text-slate-600">
-                <p><strong>■ リスニング演習（自動生成エンジン搭載）</strong><br>Part1〜Part4までのクイズをJavaScriptがその場で自動生成します。「音声再生」を押して聞き取り、正しい選択肢を選んで答え合わせをしてください。</p>
+                <p><strong>■ リスニング演習（自動生成エンジン搭載）</strong><br>Part1〜Part4までのクイズをその場で自動生成します。「音声再生」を押して聞き取り、正しい選択肢を選んで答え合わせをしてください。</p>
                 <p><strong>■ AI英会話機能</strong><br>シーンを選択し、AIのセリフを聞いてからテキストまたはマイク（🎙️）で返答することで、リアルタイムな英会話レッスンが楽しめます。</p>
                 <p><strong>■ リーディング演習（Part 5, 6, 7）</strong><br>各パートごとの模擬問題をすぐに解くことができます。全問解答後に詳細な解説を確認可能です。</p>
                 <p><strong>■ 単語帳＆学習記録</strong><br>単語登録やCSVインポートのほか、日々の頑張りは「学習記録」機能で時間ごとにグラフ化されます。</p>
@@ -532,7 +543,7 @@
             if(isRecognizing) recognition.stop(); else recognition.start();
         }
 
-        // --- 学習記録（旧：学習記録・分析・設定）データ管理 ---
+        // --- 学習記録データ管理 ---
         function getStudyLogs() { return JSON.parse(localStorage.getItem('studyLogs') || '{}'); }
         function loadDateRecord() {
             const d = document.getElementById('reg-date').value; if(!d) return; const mins = getStudyLogs()[d] || 0;
@@ -576,7 +587,7 @@
         function saveNotifyConfig() { localStorage.setItem('notifyConfig', JSON.stringify({enabled: document.getElementById('notify-toggle').checked, time: document.getElementById('notify-time').value})); }
         function testNotification() { alert("🔔 リマインダーテスト: 定時学習の時間です！"); }
 
-        // --- 単語帳帳機能 ---
+        // --- 単語帳機能 ---
         function showVocabList() { toggleMenu(); document.getElementById('vocab-search').value = ""; refreshModalList(); document.getElementById('vocab-modal').classList.remove('hidden'); document.getElementById('vocab-modal').classList.add('flex'); }
         function closeVocabList() { document.getElementById('vocab-modal').classList.add('hidden'); document.getElementById('vocab-modal').classList.remove('flex'); }
         function refreshModalList() {
@@ -687,6 +698,7 @@
             renderQuestion();
         }
 
+        // 不正解時の苦手単語カウントアップ
         function handleWrongVocab() {
             const oIdx = currentQuizList[currentQuizIdx].originalIdx;
             let list = JSON.parse(localStorage.getItem('myVocab') || '[]');
